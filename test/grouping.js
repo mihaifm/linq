@@ -1,4 +1,5 @@
 ﻿var module = QUnit.module;
+var Enumerable = require('../linq');
 
 module("Grouping");
 

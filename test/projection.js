@@ -1,4 +1,5 @@
 ﻿var module = QUnit.module;
+var Enumerable = require('../linq');
 
 module("Projection");
 
@@ -52,13 +53,13 @@ test("Select", function ()
 
 test("SelectMany", function ()
 {
-    actual = Enumerable.Range(1, 5).SelectMany("i=>Enumerable.Repeat(i,2)").ToArray();
+    actual = Enumerable.Range(1, 5).SelectMany("i=>this.Repeat(i,2)").ToArray();
     deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
-    actual = Enumerable.Range(1, 5).SelectMany("i,index=>Enumerable.Repeat(i,index+1)").ToArray();
+    actual = Enumerable.Range(1, 5).SelectMany("i,index=>this.Repeat(i,index+1)").ToArray();
     deepEqual(actual, [1, 2, 2, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 5]);
-    actual = Enumerable.Range(1, 5).SelectMany("i=>Enumerable.Repeat(i,2)", "i=>i*10").ToArray();
+    actual = Enumerable.Range(1, 5).SelectMany("i=>this.Repeat(i,2)", "i=>i*10").ToArray();
     deepEqual(actual, [10, 10, 20, 20, 30, 30, 40, 40, 50, 50]);
-    actual = Enumerable.Range(1, 5).SelectMany("i,index=>Enumerable.Repeat(i,index+1)", "i=>i*10").ToArray();
+    actual = Enumerable.Range(1, 5).SelectMany("i,index=>this.Repeat(i,index+1)", "i=>i*10").ToArray();
     deepEqual(actual, [10, 20, 20, 30, 30, 30, 40, 40, 40, 40, 50, 50, 50, 50, 50]);
 });
 
