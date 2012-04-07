@@ -1,9 +1,15 @@
 ## linq
 [linq.js](http://linqjs.codeplex.com/) - LINQ for JavaScript library packaged for node.js
 
+This contains only the core library without the jquery or rx bindings.
+
 ### Installation
 
     npm install linq
+
+### Examples
+
+    sample/tutorial.js
 
 #### What's changed from the browser version?
 
