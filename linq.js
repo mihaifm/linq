@@ -8,7 +8,7 @@
 * http://linqjs.codeplex.com/
 *--------------------------------------------------------------------------*/
 
-Enumerable = (function ()
+module.exports = (function ()
 {
     var Enumerable = function (getEnumerator)
     {
@@ -2731,6 +2731,3 @@ Enumerable = (function ()
     // out to global
     return Enumerable;
 })();
-
-
-module.exports = Enumerable;
