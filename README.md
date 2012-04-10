@@ -15,6 +15,7 @@ This contains only the core library without the jquery or rx bindings.
 
 Not much:
 
+* All lambdas are bound to the Enumerable object
 * Write and WriteLine functions modified to use `console.log` instead of `document.write`
 * Minor changes to tests so they can be run on server side
 * Sample tutorial is a .js file instead of .htm and can be run directly with node

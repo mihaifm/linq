@@ -2109,12 +2109,12 @@ module.exports = (function ()
                 }
                 else if (expression.indexOf("=>") == -1)
                 {
-                    return new Function("$,$$,$$$,$$$$", "return " + expression);
+                    return new Function("$,$$,$$$,$$$$", "return " + expression).bind(Enumerable);
                 }
                 else
                 {
                     var expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
-                    return new Function(expr[1], "return " + expr[2]);
+                    return new Function(expr[1], "return " + expr[2]).bind(Enumerable);
                 }
             }
             return expression;
