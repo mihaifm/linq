@@ -170,7 +170,7 @@ var answers = apart
     .SelectMany(function(miller){ return apart
     .Select(function(smith){ return {
         baker: baker, cooper: cooper, fletcher: fletcher, miller: miller, smith: smith}})})})})})
-    .Where("Enumerable.From($).Distinct('$.Value').Count() == 5")
+    .Where(function(x){ return Enumerable.From(x).Distinct("$.Value").Count() == 5;})
     .Where("$.baker != 5")
     .Where("$.cooper != 1")
     .Where("$.fletcher != 1 && $.fletcher != 5")
