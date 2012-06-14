@@ -2103,18 +2103,21 @@ module.exports = (function ()
             if (expression == null) return Functions.Identity;
             if (typeof expression == Types.String)
             {
+                var closure;
                 if (expression == "")
                 {
                     return Functions.Identity;
                 }
                 else if (expression.indexOf("=>") == -1)
                 {
-                    return new Function("$,$$,$$$,$$$$", "return " + expression).bind(Enumerable);
+                    closure = new Function("Enumerable", "return function($,$$,$$$,$$$$){ return " + expression + "};");
+                    return closure(Enumerable);
                 }
                 else
                 {
                     var expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
-                    return new Function(expr[1], "return " + expr[2]).bind(Enumerable);
+                    closure = new Function("Enumerable", "return function(" + expr[1] + "){ return " + expr[2] + "};");
+                    return closure(Enumerable);
                 }
             }
             return expression;
