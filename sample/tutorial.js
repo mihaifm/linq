@@ -1,21 +1,21 @@
 var Enumerable = require('../linq');
 
 /////////////////////////////////
-//First step of Lambda Expression
+//first step of Lambda Expression
 
-console.log('\nFirst step of Lambda Expression\n');
+console.log('\nfirst step of Lambda Expression\n');
 
 // Anonymous function
-Enumerable.Range(1, 3).Select(function(value, index) { return index + ':' + value }).WriteLine();
+Enumerable.range(1, 3).select(function(value, index) { return index + ':' + value }).log();
 // String like Lambda Expression (arguments => expression)
-Enumerable.Range(1, 3).Select("value,index=>index+':'+value").WriteLine();
+Enumerable.range(1, 3).select("value,index=>index+':'+value").log();
 
 // If the number of arguments is one , can use default iterator variable '$'
-Enumerable.Range(1, 3).Select("i=>i*2").WriteLine();
-Enumerable.Range(1, 3).Select("$*2").WriteLine(); // same
+Enumerable.range(1, 3).select("i=>i*2").log();
+Enumerable.range(1, 3).select("$*2").log(); // same
 
 // "" is shortcut of "x => x" (identity function)
-Enumerable.Range(4, 7).Join(Enumerable.Range(8, 5), "", "", "outer,inner=>outer*inner").WriteLine();
+Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", "outer,inner=>outer*inner").log();
 
 
 
@@ -26,32 +26,32 @@ console.log('\nScope of lambda expression\n');
 
 var number = 3;
 // Can't Find number | lambda expression can use only global variable
-// Enumerable.Range(1,10).Where("$ == number").WriteLine();
+// Enumerable.range(1,10).where("$ == number").log();
 
 // use anonymous founction, can capture variable
-Enumerable.Range(1,10).Where(function(i){return i == number}).WriteLine();
+Enumerable.range(1,10).where(function(i){return i == number}).log();
 
 
 
 //////////////////////////////////////////
-//From(Object) -> convert to KeyValuePair
+//from(Object) -> convert to keyvaluePair
 
-console.log('\nFrom(Object) -> convert to KeyValuePair\n');
+console.log('\nfrom(Object) -> convert to keyvaluePair\n');
 
 var object = {foo:"a", "bar":100, "foobar":true};
-Enumerable.From(object).ForEach(function(obj)
+Enumerable.from(object).forEach(function(obj)
 {
-    console.log(obj.Key + ":" + obj.Value);
+    console.log(obj.key + ":" + obj.value);
 });
 
 
 
 //////////////////////////////
-//ForEach (continue and break)
+//forEach (continue and break)
 
-console.log('\nForEach (continue and break)\n');
+console.log('\nforEach (continue and break)\n');
 
-Enumerable.Repeat("foo", 10).ForEach(function(value, index)
+Enumerable.repeat("foo", 10).forEach(function(value, index)
 {
     if (index % 2 == 0) return; // continue
     if (index > 6) return false; // break
@@ -77,31 +77,31 @@ var objects = [
 ]
 
 // ref compare, can not grouping
-Enumerable.From(objects)
-    .GroupBy("$.Date", "$.Id",
+Enumerable.from(objects)
+    .groupBy("$.Date", "$.Id",
         function (key, group) { return { date: key, ids: group.ToString(',')} })
-    .WriteLine("$.date + ':' + $.ids");
+    .log("$.date + ':' + $.ids");
 
 console.log("------");
 
 // use fourth argument(compareSelector)
-Enumerable.From(objects)
-    .GroupBy("$.Date", "$.Id",
+Enumerable.from(objects)
+    .groupBy("$.Date", "$.Id",
         function (key, group) { return { date: key, ids: group.ToString(',')} },
         function (key) { return key.toString() })
-    .WriteLine("$.date + ':' + $.ids");
+    .log("$.date + ':' + $.ids");
 
 
 
 //////////////////////////////
-//Regular Expression Matches
+//Regular Expression matches
 
-console.log('\nRegular Expression Matches\n');
+console.log('\nRegular Expression matches\n');
 
-// Enumerable.Matches return Enumerable<MatchObject>
+// Enumerable.matches return Enumerable<MatchObject>
 
 var input = "abcdefgABzDefabgdg";
-Enumerable.Matches(input, "ab(.)d", "i").ForEach(function(match)
+Enumerable.matches(input, "ab(.)d", "i").forEach(function(match)
 {
     for (var prop in match)
     {
@@ -119,7 +119,7 @@ Enumerable.Matches(input, "ab(.)d", "i").ForEach(function(match)
 console.log('\nLazyEvaluation and InfinityList\n');
 
 // first radius of circle's area over 10000
-var result = Enumerable.ToInfinity(1).Where("r=>r*r*Math.PI>10000").First();
+var result = Enumerable.toInfinity(1).where("r=>r*r*Math.PI>10000").first();
 console.log(result);
 
 
@@ -139,19 +139,19 @@ var instanceA = new cls("a", 100);
 var instanceB = new cls("b", 2000);
 
 // create blank dictionary
-var dict = Enumerable.Empty().ToDictionary();
+var dict = Enumerable.empty().toDictionary();
 // create blank dictionary(use compareSelector)
-var dict = Enumerable.Empty().ToDictionary("","",function (x) { return x.a + x.b });
+var dict = Enumerable.empty().toDictionary("","",function (x) { return x.a + x.b });
 
-dict.Add(instanceA, "zzz");
-dict.Add(instanceB, "huga");
-console.log(dict.Get(instanceA)); // zzz
-console.log(dict.Get(instanceB)); // huga
+dict.add(instanceA, "zzz");
+dict.add(instanceB, "huga");
+console.log(dict.get(instanceA)); // zzz
+console.log(dict.get(instanceB)); // huga
 
-// enumerable (to KeyValuePair)
-dict.ToEnumerable().ForEach(function (kvp)
+// enumerable (to keyvaluePair)
+dict.toEnumerable().forEach(function (kvp)
 {
-    console.log(kvp.Key.a + ":" + kvp.Value);
+    console.log(kvp.key.a + ":" + kvp.value);
 });
 
 
@@ -162,20 +162,20 @@ dict.ToEnumerable().ForEach(function (kvp)
 console.log('\nNondeterministic Programs\n');
 
 // from Structure and Interpretation of Computer Programs 4.3.2
-var apart = Enumerable.Range(1, 5);
+var apart = Enumerable.range(1, 5);
 var answers = apart
-    .SelectMany(function(baker){ return apart
-    .SelectMany(function(cooper){ return apart
-    .SelectMany(function(fletcher){ return apart
-    .SelectMany(function(miller){ return apart
+    .selectMany(function(baker){ return apart
+    .selectMany(function(cooper){ return apart
+    .selectMany(function(fletcher){ return apart
+    .selectMany(function(miller){ return apart
     .Select(function(smith){ return {
         baker: baker, cooper: cooper, fletcher: fletcher, miller: miller, smith: smith}})})})})})
-    .Where("this.From($).Distinct('$.Value').Count() == 5")
-    .Where("$.baker != 5")
-    .Where("$.cooper != 1")
-    .Where("$.fletcher != 1 && $.fletcher != 5")
-    .Where("$.miller > $.cooper")
-    .Where("Math.abs($.smith - $.fletcher) != 1")
-    .Where("Math.abs($.fletcher - $.cooper) != 1");
+    .where("this.from($).Distinct('$.value').Count() == 5")
+    .where("$.baker != 5")
+    .where("$.cooper != 1")
+    .where("$.fletcher != 1 && $.fletcher != 5")
+    .where("$.miller > $.cooper")
+    .where("Math.abs($.smith - $.fletcher) != 1")
+    .where("Math.abs($.fletcher - $.cooper) != 1");
 
-answers.SelectMany("").WriteLine("$.Key + ':' + $.Value");
+answers.selectMany("").log("$.key + ':' + $.value");

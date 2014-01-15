@@ -1,7 +1,10 @@
-﻿var module = QUnit.module;
-var Enumerable = require('../linq');
+﻿/// <reference path="qunit.js"/>
+/// <reference path="../linq.js" />
+/// <reference path="../extensions/linq.qunit.js" />
 
 module("Dictionary");
+
+var expected, actual; // will be removed
 
 var result;
 var correct;
@@ -13,144 +16,144 @@ var obj2_ = { a: 2 }
 
 test("AddGetCountRemoveClear", function ()
 {
-    var dict = Enumerable.Empty().ToDictionary();
-    dict.Add("a", 1);
-    dict.Add("b", 2);
-    dict.Add("c", 3);
-    dict.Add("c", 100);
-    equal(1, dict.Get("a"));
-    equal(2, dict.Get("b"));
-    equal(100, dict.Get("c"));
+    var dict = Enumerable.empty().toDictionary();
+    dict.add("a", 1);
+    dict.add("b", 2);
+    dict.add("c", 3);
+    dict.add("c", 100);
+    equal(1, dict.get("a"));
+    equal(2, dict.get("b"));
+    equal(100, dict.get("c"));
 
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Add(obj2, 3);
-    dict.Add(obj2_, 4);
-    equal(1, dict.Get(obj1));
-    equal(2, dict.Get(obj1_));
-    equal(3, dict.Get(obj2));
-    equal(4, dict.Get(obj2_));
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.add(obj2, 3);
+    dict.add(obj2_, 4);
+    equal(1, dict.get(obj1));
+    equal(2, dict.get(obj1_));
+    equal(3, dict.get(obj2));
+    equal(4, dict.get(obj2_));
 
-    equal(7, dict.Count());
+    equal(7, dict.count());
 
-    dict.Remove("a");
-    dict.Remove(obj1);
-    dict.Remove(obj1_);
-    dict.Remove(obj2_);
-    equal(undefined, dict.Get("a"));
-    equal(undefined, dict.Get(obj1));
-    equal(undefined, dict.Get(obj1_));
-    equal(undefined, dict.Get(obj2_));
+    dict.remove("a");
+    dict.remove(obj1);
+    dict.remove(obj1_);
+    dict.remove(obj2_);
+    equal(undefined, dict.get("a"));
+    equal(undefined, dict.get(obj1));
+    equal(undefined, dict.get(obj1_));
+    equal(undefined, dict.get(obj2_));
 
-    equal(3, dict.Count());
-    dict.Clear();
-    equal(undefined, dict.Get("b"));
-    equal(undefined, dict.Get(obj2));
-    equal(0, dict.Count());
+    equal(3, dict.count());
+    dict.clear();
+    equal(undefined, dict.get("b"));
+    equal(undefined, dict.get(obj2));
+    equal(0, dict.count());
 
-    dict = Enumerable.Empty().ToDictionary("", "", aComparer);
+    dict = Enumerable.empty().toDictionary("", "", aComparer);
 
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Add(obj2, 3);
-    dict.Add(obj2_, 4);
-    equal(2, dict.Get(obj1));
-    equal(2, dict.Get(obj1_));
-    equal(4, dict.Get(obj2));
-    equal(4, dict.Get(obj2_));
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.add(obj2, 3);
+    dict.add(obj2_, 4);
+    equal(2, dict.get(obj1));
+    equal(2, dict.get(obj1_));
+    equal(4, dict.get(obj2));
+    equal(4, dict.get(obj2_));
 
-    equal(2, dict.Count());
+    equal(2, dict.count());
 
-    dict.Remove(obj1);
-    equal(undefined, dict.Get(obj1));
-    equal(undefined, dict.Get(obj1_));
+    dict.remove(obj1);
+    equal(undefined, dict.get(obj1));
+    equal(undefined, dict.get(obj1_));
 
-    equal(1, dict.Count());
-    dict.Clear();
-    equal(undefined, dict.Get(obj2));
-    equal(undefined, dict.Get(obj2_));
-    equal(0, dict.Count());
+    equal(1, dict.count());
+    dict.clear();
+    equal(undefined, dict.get(obj2));
+    equal(undefined, dict.get(obj2_));
+    equal(0, dict.count());
 });
 
 test("SetContains", function ()
 {
-    var dict = Enumerable.Empty().ToDictionary();
-    dict.Add("a", 1);
-    dict.Add("b", 2);
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Set("a", 1000);
-    dict.Set("b", 2000);
-    dict.Set(obj1, 10000);
-    dict.Set(obj1_, 20000);
-    equal(1000, dict.Get("a"));
-    equal(2000, dict.Get("b"));
-    equal(10000, dict.Get(obj1));
-    equal(20000, dict.Get(obj1_));
-    ok(dict.Contains("a"));
-    ok(dict.Contains("b"));
-    ok(dict.Contains(obj1));
-    ok(dict.Contains(obj1_));
-    ok(!dict.Contains("c"));
-    ok(!dict.Contains(obj2));
+    var dict = Enumerable.empty().toDictionary();
+    dict.add("a", 1);
+    dict.add("b", 2);
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.set("a", 1000);
+    dict.set("b", 2000);
+    dict.set(obj1, 10000);
+    dict.set(obj1_, 20000);
+    equal(1000, dict.get("a"));
+    equal(2000, dict.get("b"));
+    equal(10000, dict.get(obj1));
+    equal(20000, dict.get(obj1_));
+    ok(dict.contains("a"));
+    ok(dict.contains("b"));
+    ok(dict.contains(obj1));
+    ok(dict.contains(obj1_));
+    ok(!dict.contains("c"));
+    ok(!dict.contains(obj2));
 
-    dict = Enumerable.Empty().ToDictionary("", "", aComparer);
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Add(obj2, 3);
-    dict.Add(obj2_, 4);
-    dict.Set(obj1, 10000);
-    dict.Set(obj1_, 20000);
-    dict.Set(obj2, 30000);
-    dict.Set(obj2_, 40000);
-    equal(20000, dict.Get(obj1));
-    equal(20000, dict.Get(obj1_));
-    equal(40000, dict.Get(obj2));
-    equal(40000, dict.Get(obj2_));
-    ok(dict.Contains(obj1));
-    ok(dict.Contains(obj1_));
-    ok(!dict.Contains({ a: 3 }));
+    dict = Enumerable.empty().toDictionary("", "", aComparer);
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.add(obj2, 3);
+    dict.add(obj2_, 4);
+    dict.set(obj1, 10000);
+    dict.set(obj1_, 20000);
+    dict.set(obj2, 30000);
+    dict.set(obj2_, 40000);
+    equal(20000, dict.get(obj1));
+    equal(20000, dict.get(obj1_));
+    equal(40000, dict.get(obj2));
+    equal(40000, dict.get(obj2_));
+    ok(dict.contains(obj1));
+    ok(dict.contains(obj1_));
+    ok(!dict.contains({ a: 3 }));
 });
 
-test("ToEnumerable", function ()
+test("toEnumerable", function ()
 {
-    var dict = Enumerable.Empty().ToDictionary();
-    dict.Add("a", 1);
-    dict.Add("b", 2);
-    dict.Add("c", 3);
+    var dict = Enumerable.empty().toDictionary();
+    dict.add("a", 1);
+    dict.add("b", 2);
+    dict.add("c", 3);
 
-    var ar = dict.ToEnumerable().OrderBy("$.Key").ToArray();
-    equal("a", ar[0].Key);
-    equal(1, ar[0].Value);
-    equal("b", ar[1].Key);
-    equal(2, ar[1].Value);
-    equal("c", ar[2].Key);
-    equal(3, ar[2].Value);
+    var ar = dict.toEnumerable().orderBy("$.key").toArray();
+    equal("a", ar[0].key);
+    equal(1, ar[0].value);
+    equal("b", ar[1].key);
+    equal(2, ar[1].value);
+    equal("c", ar[2].key);
+    equal(3, ar[2].value);
 
-    dict.Clear();
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Add(obj2, 3);
-    dict.Add(obj2_, 4);
+    dict.clear();
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.add(obj2, 3);
+    dict.add(obj2_, 4);
 
-    ar = dict.ToEnumerable().OrderBy("$.Key.a").ToArray();
-    equal(obj1, ar[0].Key);
-    equal(1, ar[0].Value);
-    equal(obj1_, ar[1].Key);
-    equal(2, ar[1].Value);
-    equal(obj2, ar[2].Key);
-    equal(3, ar[2].Value);
-    equal(obj2_, ar[3].Key);
-    equal(4, ar[3].Value);
+    ar = dict.toEnumerable().orderBy("$.key.a").toArray();
+    equal(obj1, ar[0].key);
+    equal(1, ar[0].value);
+    equal(obj1_, ar[1].key);
+    equal(2, ar[1].value);
+    equal(obj2, ar[2].key);
+    equal(3, ar[2].value);
+    equal(obj2_, ar[3].key);
+    equal(4, ar[3].value);
 
-    dict = Enumerable.Empty().ToDictionary("", "", aComparer);
-    dict.Add(obj1, 1);
-    dict.Add(obj1_, 2);
-    dict.Add(obj2, 3);
-    dict.Add(obj2_, 4);
-    ar = dict.ToEnumerable().OrderBy("$.Key.a").ToArray();
-    equal(obj1_, ar[0].Key);
-    equal(2, ar[0].Value);
-    equal(obj2_, ar[1].Key);
-    equal(4, ar[1].Value);
+    dict = Enumerable.empty().toDictionary("", "", aComparer);
+    dict.add(obj1, 1);
+    dict.add(obj1_, 2);
+    dict.add(obj2, 3);
+    dict.add(obj2_, 4);
+    ar = dict.toEnumerable().orderBy("$.key.a").toArray();
+    equal(obj1_, ar[0].key);
+    equal(2, ar[0].value);
+    equal(obj2_, ar[1].key);
+    equal(4, ar[1].value);
 });

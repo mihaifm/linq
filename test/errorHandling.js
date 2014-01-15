@@ -1,44 +1,47 @@
-﻿var module = QUnit.module;
-var Enumerable = require('../linq');
+﻿/// <reference path="qunit.js"/>
+/// <reference path="../linq.js" />
+/// <reference path="../extensions/linq.qunit.js" />
 
 module("ErrorHandling");
 
-test("Catch", function ()
+var expected, actual; // will be removed
+
+test("catchError", function ()
 {
     var msg;
-    actual = Enumerable.Range(1, 10)
-        .Select(function (i)
+    actual = Enumerable.range(1, 10)
+        .select(function (i)
         {
             if (i == 5) throw new Error("aiueo");
             return i;
         })
-        .Catch(function (e)
+        .catchError(function (e)
         {
             msg = e.message;
         })
-        .ToArray();
+        .toArray();
     deepEqual(actual, [1, 2, 3, 4]);
     equal(msg,"aiueo");
 });
 
-test("Finally", function ()
+test("finallyAction", function ()
 {
     var msg;
-    actual = Enumerable.Range(1, 10)
-        .Select(function (i)
+    actual = Enumerable.range(1, 10)
+        .select(function (i)
         {
             if (i == 5) throw new Error("aiueo");
             return i;
         })
-        .Catch(function (e)
+        .catchError(function (e)
         {
             msg = e.message;
         })
-        .Finally(function (f)
+        .finallyAction(function (f)
         {
             msg += "f";
         })
-        .ToArray();
+        .toArray();
     deepEqual(actual, [1, 2, 3, 4]);
     equal(msg, "aiueof");
 });
