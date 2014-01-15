@@ -172,4 +172,4 @@ module.exports = (function (root) {
             ok(false, "Failed testCode throws error. CatchedErrorMessage:" + error.message + ((message != null) ? " Message:" + message : ""));
         }
     });
-})(global);
+});

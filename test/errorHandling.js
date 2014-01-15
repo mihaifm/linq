@@ -1,6 +1,6 @@
-﻿/// <reference path="qunit.js"/>
-/// <reference path="../linq.js" />
-/// <reference path="../extensions/linq.qunit.js" />
+﻿var module = QUnit.module;
+var Enumerable = require('../linq');
+require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
 module("ErrorHandling");
 
