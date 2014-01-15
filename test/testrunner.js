@@ -3,6 +3,10 @@ var tr = require("qunit");
 var callback = function(err, report) {
     console.dir(report);
 }
+tr.run({
+    code: "./linq.js",
+    tests: "./test/linq.qunit-test.js"
+}, callback);
 
 tr.run({
     code: "./linq.js",
@@ -72,4 +76,9 @@ tr.run({
 tr.run({
     code: "./linq.js",
     tests: "./test/set.js"
+}, callback);
+
+tr.run({
+    code: "./linq.js",
+    tests: "./test/whereSelectEnumerable.js"
 }, callback);

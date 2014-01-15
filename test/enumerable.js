@@ -1,141 +1,189 @@
 ﻿var module = QUnit.module;
 var Enumerable = require('../linq');
+require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
 module("Enumerable");
 
-test("Choice", function ()
-{
-    actual = Enumerable.Choice(1, 10, 31, 42).Take(10).ToArray();
+var expected, actual; // will be removed
+
+test("choice", function () {
+    actual = Enumerable.choice(1, 10, 31, 42).take(10).toArray();
     notEqual(actual, [1, 10, 31, 42, 1, 10, 31, 42, 1, 10], "random test. if failed retry");
     equal(actual.length, 10);
 
-    actual = Enumerable.Choice([1, 10, 31, 42]).Take(10).ToArray();
+    actual = Enumerable.choice([1, 10, 31, 42]).take(10).toArray();
+    notEqual(actual, [1, 10, 31, 42, 1, 10, 31, 42, 1, 10], "random test. if failed retry");
+    equal(actual.length, 10);
+
+    var seq = Enumerable.make(1).concat([10]).concat([31]).concat([42]);
+
+    actual = Enumerable.choice(seq).take(10).toArray();
     notEqual(actual, [1, 10, 31, 42, 1, 10, 31, 42, 1, 10], "random test. if failed retry");
     equal(actual.length, 10);
 });
 
-test("Cycle", function ()
-{
-    actual = Enumerable.Cycle(1, 10, 31, 42).Take(10).ToArray();
+test("cycle", function () {
+    actual = Enumerable.cycle(1, 10, 31, 42).take(10).toArray();
     deepEqual(actual, [1, 10, 31, 42, 1, 10, 31, 42, 1, 10]);
-    actual = Enumerable.Cycle([1, 2, 3, 4, 5]).Take(10).ToArray();
+    actual = Enumerable.cycle([1, 2, 3, 4, 5]).take(10).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
+
+    var seq = Enumerable.make(1).concat([10]).concat([31]).concat([42]);
+    actual = Enumerable.cycle(seq).take(10).toArray();
+    deepEqual(actual, [1, 10, 31, 42, 1, 10, 31, 42, 1, 10]);
+
+    actual = Enumerable.cycle(Enumerable.range(1, 5)).take(10).toArray();
+    deepEqual(actual, [1, 2, 3, 4, 5, 1, 2, 3, 4, 5]);
+
+    Enumerable.cycle(1, 2, 3).take(5).is(1, 2, 3, 1, 2);
 });
 
-test("Empty", function ()
-{
-    actual = Enumerable.Empty().ToArray();
+test("empty", function () {
+    actual = Enumerable.empty().toArray();
     deepEqual(actual, []);
 });
 
-test("From", function ()
-{
-    actual = Enumerable.From("temp").ToArray();
+test("from", function () {
+    actual = Enumerable.from("temp").toArray();
     deepEqual(actual, ["t", "e", "m", "p"]);
 
-    actual = Enumerable.From(3).ToArray();
+    actual = Enumerable.from(3).toArray();
     deepEqual(actual, [3]);
 
-    actual = Enumerable.From([1, 2, 3, 4, 5]).ToArray();
+    actual = Enumerable.from([1, 2, 3, 4, 5]).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5]);
 
-    actual = Enumerable.From({ foo: "bar", func: function () { } }).ToArray();
-    deepEqual(actual, [{ Key: "foo", Value: "bar"}]);
+    actual = Enumerable.from({ foo: "bar", func: function () { } }).toArray();
+    deepEqual(actual, [{ key: "foo", value: "bar" }]);
+
+    //var div = document.createElement("html");
+    //var last = document.createElement("div");
+    //last.appendChild(document.createTextNode("test"));
+    //div.appendChild(document.createElement("div"));
+    //div.appendChild(document.createElement("div"));
+    //div.appendChild(last);
+    //var seq = Enumerable.from(div.getElementsByTagName("div"));
+    //equal(seq.count(), 3);
+    //equal(seq.elementAt(2), last);
+    //equal(seq.elementAt(2).firstChild.nodeValue, "test");
 });
 
-test("Return", function ()
-{
-    actual = Enumerable.Return("hoge").ToArray();
+test("make", function () {
+    actual = Enumerable.make("hoge").toArray();
     deepEqual(actual, ["hoge"]);
 });
 
-test("Matches", function ()
-{
-    actual = Enumerable.Matches("xbcyBCzbc", /(.)bc/i).Select("$.index+$[1]").ToArray();
+test("matches", function () {
+    actual = Enumerable.matches("xbcyBCzbc", /(.)bc/i).select("$.index+$[1]").toArray();
     deepEqual(actual, ["0x", "3y", "6z"]);
-    actual = Enumerable.Matches("xbcyBCzbc", "(.)bc").Select("$.index+$[1]").ToArray(); ;
+    actual = Enumerable.matches("xbcyBCzbc", "(.)bc").select("$.index+$[1]").toArray();;
     deepEqual(actual, ["0x", "6z"]);
-    actual = Enumerable.Matches("xbcyBCzbc", "(.)bc", "i").Select("$.index+$[1]").ToArray(); ;
+    actual = Enumerable.matches("xbcyBCzbc", "(.)bc", "i").select("$.index+$[1]").toArray();;
     deepEqual(actual, ["0x", "3y", "6z"]);
 });
 
-test("Range", function ()
-{
-    actual = Enumerable.Range(1, 10).ToArray();
+test("range", function () {
+    actual = Enumerable.range(1, 10).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    actual = Enumerable.Range(1, 5, 3).ToArray();
+    actual = Enumerable.range(1, 5, 3).toArray();
     deepEqual(actual, [1, 4, 7, 10, 13]);
+
+    Enumerable.range(3, 4).is(3, 4, 5, 6);
+    Enumerable.range(-2, 4).is(-2, -1, 0, 1);
+    Enumerable.range(-2, 4, 2).is(-2, 0, 2, 4);
 });
 
-test("RangeDown", function ()
-{
-    actual = Enumerable.RangeDown(1, 10).ToArray();
+test("rangeDown", function () {
+    actual = Enumerable.rangeDown(1, 10).toArray();
     deepEqual(actual, [1, 0, -1, -2, -3, -4, -5, -6, -7, -8]);
-    actual = Enumerable.RangeDown(1, 5, 3).ToArray();
+    actual = Enumerable.rangeDown(1, 5, 3).toArray();
     deepEqual(actual, [1, -2, -5, -8, -11]);
+
+    Enumerable.rangeDown(3, 5).is(3, 2, 1, 0, -1);
+    Enumerable.rangeDown(-2, 4).is(-2, -3, -4, -5);
+    Enumerable.rangeDown(-2, 4, 2).is(-2, -4, -6, -8);
 });
 
-test("RangeTo", function ()
-{
-    actual = Enumerable.RangeTo(5, 10).ToArray();
+test("rangeTo", function () {
+    actual = Enumerable.rangeTo(5, 10).toArray();
     deepEqual(actual, [5, 6, 7, 8, 9, 10]);
-    actual = Enumerable.RangeTo(1, 10, 3).ToArray();
+    actual = Enumerable.rangeTo(1, 10, 3).toArray();
     deepEqual(actual, [1, 4, 7, 10]);
-    actual = Enumerable.RangeTo(-2, -8).ToArray();
+    actual = Enumerable.rangeTo(-2, -8).toArray();
     deepEqual(actual, [-2, -3, -4, -5, -6, -7, -8]);
-    actual = Enumerable.RangeTo(-2, -8, 2).ToArray();
+    actual = Enumerable.rangeTo(-2, -8, 2).toArray();
     deepEqual(actual, [-2, -4, -6, -8]);
+
+    Enumerable.rangeTo(1, 4).is(1, 2, 3, 4);
+    Enumerable.rangeTo(-3, 6).is(-3, -2, -1, 0, 1, 2, 3, 4, 5, 6);
+    Enumerable.rangeTo(2, -5).is(2, 1, 0, -1, -2, -3, -4, -5);
+    Enumerable.rangeTo(1, 5, 3).is(1, 4);
+    Enumerable.rangeTo(1, -5, 3).is(1, -2, -5);
+    Enumerable.rangeTo(1, -6, 3).is(1, -2, -5);
+
+    Enumerable.rangeTo(4, 4).is(4);
+    Enumerable.rangeTo(4, 4, 3).is(4);
+
 });
 
-test("Repeat", function ()
-{
-    actual = Enumerable.Repeat("temp").Take(3).ToArray();
+test("repeat", function () {
+    actual = Enumerable.repeat("temp").take(3).toArray();
     deepEqual(actual, ["temp", "temp", "temp"]);
-    actual = Enumerable.Repeat("temp", 5).ToArray();
+    actual = Enumerable.repeat("temp", 5).toArray();
     deepEqual(actual, ["temp", "temp", "temp", "temp", "temp"]);
 });
 
-test("RepeatWithFinalize", function ()
-{
+test("repeatWithFinalize", function () {
     var fin;
-    actual = Enumerable.RepeatWithFinalize(
+    actual = Enumerable.repeatWithFinalize(
                     function () { return "temp"; },
                     function () { fin = "final"; })
-                .Take(3).ToArray();
+                .take(3).toArray();
     deepEqual(actual, ["temp", "temp", "temp"]);
     equal("final", fin);
 });
 
-test("Generate", function ()
-{
-    actual = Enumerable.Generate(function () { return "temp" }).Take(3).ToArray();
+test("generate", function () {
+    actual = Enumerable.generate(function () { return "temp" }).take(3).toArray();
     deepEqual(actual, ["temp", "temp", "temp"]);
-    actual = Enumerable.Generate(function () { return "temp" }, 5).ToArray();
+    actual = Enumerable.generate(function () { return "temp" }, 5).toArray();
     deepEqual(actual, ["temp", "temp", "temp", "temp", "temp"]);
 });
 
-test("ToInfinity", function ()
-{
-    actual = Enumerable.ToInfinity().Where("i=>i%2==0").Take(10).ToArray();
+test("toInfinity", function () {
+    actual = Enumerable.toInfinity().where("i=>i%2==0").take(10).toArray();
     deepEqual(actual, [0, 2, 4, 6, 8, 10, 12, 14, 16, 18]);
-    actual = Enumerable.ToInfinity(101).Take(5).ToArray();
+    actual = Enumerable.toInfinity(101).take(5).toArray();
     deepEqual(actual, [101, 102, 103, 104, 105]);
-    actual = Enumerable.ToInfinity(101, 5).Take(5).ToArray();
+    actual = Enumerable.toInfinity(101, 5).take(5).toArray();
     deepEqual(actual, [101, 106, 111, 116, 121]);
 });
 
-test("ToNegativeInfinity", function ()
-{
-    actual = Enumerable.ToNegativeInfinity().Where("i=>i%2==0").Take(10).ToArray();
+test("toNegativeInfinity", function () {
+    actual = Enumerable.toNegativeInfinity().where("i=>i%2==0").take(10).toArray();
     deepEqual(actual, [0, -2, -4, -6, -8, -10, -12, -14, -16, -18]);
-    actual = Enumerable.ToNegativeInfinity(3).Take(10).ToArray();
+    actual = Enumerable.toNegativeInfinity(3).take(10).toArray();
     deepEqual(actual, [3, 2, 1, 0, -1, -2, -3, -4, -5, -6]);
-    actual = Enumerable.ToNegativeInfinity(3, 5).Take(4).ToArray();
+    actual = Enumerable.toNegativeInfinity(3, 5).take(4).toArray();
     deepEqual(actual, [3, -2, -7, -12]);
 });
 
-test("Unfold", function ()
-{
-    actual = Enumerable.Unfold(5, "$+3").Take(5).ToArray();
+test("unfold", function () {
+    actual = Enumerable.unfold(5, "$+3").take(5).toArray();
     deepEqual(actual, [5, 8, 11, 14, 17]);
+});
+
+test("defer", function () {
+
+    var xs = [];
+
+    var r = Enumerable.range(1, 5)
+        .doAction(function (x) { xs.push(x); });
+
+    var de = Enumerable.defer(function () { return r; });
+
+    xs.length.is(0);
+
+    de.toArray().is(1, 2, 3, 4, 5);
+    xs.is(1, 2, 3, 4, 5);
 });
