@@ -7,7 +7,7 @@
  * http://linqjs.codeplex.com/
  *------------------------------------------------------------------------*/
 
-module.expors = (function (root, undefined) {
+module.exports = (function (root, undefined) {
     // ReadOnly Function
     var Functions = {
         Identity: function (x) { return x; },
@@ -2994,4 +2994,4 @@ module.expors = (function (root, undefined) {
     else {
         root.Enumerable = Enumerable;
     }
-})(this);
+})(global);

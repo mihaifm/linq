@@ -3,12 +3,16 @@ var tr = require("qunit");
 var callback = function(err, report) {
     console.dir(report);
 }
-
 tr.run({
     code: "./linq.js",
-    tests: "./test/action.js"
+    tests: "./test/linq.qunit-test.js"
 }, callback);
 
+// tr.run({
+//     code: "./linq.js",
+//     tests: "./test/action.js"
+// }, callback);
+//
 // tr.run({
 //     code: "./linq.js",
 //     tests: "./test/aggregate.js"

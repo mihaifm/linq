@@ -1,6 +1,6 @@
 ﻿var module = QUnit.module;
 var Enumerable = require('../linq')
-/* var root = require("../extensions/linq.qunit") */
+/* require("../extensions/linq.qunit"); */
 
 module("Action");
 
