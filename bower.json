@@ -15,7 +15,7 @@
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "6b76ff6f5f77d3a4f7a7812bb9a979536f7e5e78"
+    "commit": "7138dec96607664c96787635552a89aec90e5d8c"
   },
   "_source": "git://github.com/danyim/linq.git",
   "_target": "*",
