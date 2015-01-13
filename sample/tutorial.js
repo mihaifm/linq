@@ -6,16 +6,16 @@ var Enumerable = require('../linq');
 console.log('\nfirst step of Lambda Expression\n');
 
 // Anonymous function
-Enumerable.range(1, 3).select(function(value, index) { return index + ':' + value }).log();
+Enumerable.range(1, 3).select(function(value, index) { return index + ':' + value }).log().toJoinedString();
 // String like Lambda Expression (arguments => expression)
-Enumerable.range(1, 3).select("value,index=>index+':'+value").log();
+Enumerable.range(1, 3).select("value,index=>index+':'+value").log().toJoinedString();
 
 // If the number of arguments is one , can use default iterator variable '$'
-Enumerable.range(1, 3).select("i=>i*2").log();
-Enumerable.range(1, 3).select("$*2").log(); // same
+Enumerable.range(1, 3).select("i=>i*2").log().toJoinedString();
+Enumerable.range(1, 3).select("$*2").log().toJoinedString(); // same
 
 // "" is shortcut of "x => x" (identity function)
-Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", "outer,inner=>outer*inner").log();
+Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", "outer,inner=>outer*inner").log().toJoinedString();
 
 
 
@@ -26,12 +26,10 @@ console.log('\nScope of lambda expression\n');
 
 var number = 3;
 // Can't Find number | lambda expression can use only global variable
-// Enumerable.range(1,10).where("$ == number").log();
+// Enumerable.range(1,10).where("$ == number").log().toJoinedString();
 
 // use anonymous founction, can capture variable
-Enumerable.range(1,10).where(function(i){return i == number}).log();
-
-
+Enumerable.range(1,10).where(function(i){return i == number}).log().toJoinedString();
 
 //////////////////////////////////////////
 //from(Object) -> convert to keyvaluePair
@@ -79,17 +77,17 @@ var objects = [
 // ref compare, can not grouping
 Enumerable.from(objects)
     .groupBy("$.Date", "$.Id",
-        function (key, group) { return { date: key, ids: group.ToString(',')} })
-    .log("$.date + ':' + $.ids");
+        function (key, group) { return { date: key, ids: group.toJoinedString(',')} })
+    .log("$.date + ':' + $.ids").toJoinedString();
 
 console.log("------");
 
 // use fourth argument(compareSelector)
 Enumerable.from(objects)
     .groupBy("$.Date", "$.Id",
-        function (key, group) { return { date: key, ids: group.ToString(',')} },
+        function (key, group) { return { date: key, ids: group.toJoinedString(',')} },
         function (key) { return key.toString() })
-    .log("$.date + ':' + $.ids");
+    .log("$.date + ':' + $.ids").toJoinedString();
 
 
 
@@ -168,9 +166,9 @@ var answers = apart
     .selectMany(function(cooper){ return apart
     .selectMany(function(fletcher){ return apart
     .selectMany(function(miller){ return apart
-    .Select(function(smith){ return {
+    .select(function(smith){ return {
         baker: baker, cooper: cooper, fletcher: fletcher, miller: miller, smith: smith}})})})})})
-    .where("this.from($).Distinct('$.value').Count() == 5")
+    .where(function(x){ return Enumerable.from(x).distinct("$.value").count() == 5 })
     .where("$.baker != 5")
     .where("$.cooper != 1")
     .where("$.fletcher != 1 && $.fletcher != 5")
@@ -178,4 +176,4 @@ var answers = apart
     .where("Math.abs($.smith - $.fletcher) != 1")
     .where("Math.abs($.fletcher - $.cooper) != 1");
 
-answers.selectMany("").log("$.key + ':' + $.value");
+answers.selectMany("").log("$.key + ':' + $.value").toJoinedString();
