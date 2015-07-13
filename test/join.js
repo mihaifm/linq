@@ -1,5 +1,5 @@
 ﻿var module = QUnit.module;
-var Enumerable = require('../linq');
+var Enumerable = require('../linq.min');
 require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
 module("Join");
