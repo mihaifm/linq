@@ -11,10 +11,13 @@
   "scripts": {
     "test": "node test/testrunner.js"
   },
-  "preferGlobal" : false,
-  "keywords": ["linq"],
+  "preferGlobal": false,
+  "keywords": [
+    "linq"
+  ],
   "dependencies": {},
   "devDependencies": {
+    "node-minify": "^1.2.0",
     "qunit": "~0.5.18"
   },
   "optionalDependencies": {},
