@@ -2,7 +2,7 @@
   "name": "linq",
   "author": "Mihai Ciuraru <mihaixc@gmail.com>",
   "description": "linq.js - LINQ for JavaScript library packaged for node.js",
-  "version": "3.0.5",
+  "version": "3.0.6",
   "homepage": "https://github.com/mihaifm/linq",
   "repository": {
     "type": "git",
