@@ -24,5 +24,6 @@
   "engines": {
     "node": "*"
   },
-  "main": "./linq"
+  "main": "./linq",
+  "types": "./linq.d.ts"
 }
