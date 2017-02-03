@@ -33,7 +33,7 @@ declare namespace Enumerable {
   export function unfold<T>(seed: T, func: (value: T) => T): IEnumerable<T>;
   export function defer<T>(enumerableFactory: () => IEnumerable<T>): IEnumerable<T>;
 
-  export interface IEnumerable<T> {
+  export interface IEnumerable<T> extends Iterable<T> {
     constructor(getEnumerator: () => IEnumerator<T>);
     getEnumerator(): IEnumerator<T>;
 
@@ -160,6 +160,7 @@ declare namespace Enumerable {
     asEnumerable(): IEnumerable<T>;
     cast<TResult>(): IEnumerable<TResult>;
     toArray(): T[];
+    [Symbol.iterator](): Iterator<T>;
     // truly, return type is ILookup<TKey, T> but Visual Studio + TypeScript Compiler can't compile. 
     toLookup<TKey>(keySelector: (element: T) => TKey): ILookup<TKey, any>;
     toLookup<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): ILookup<TKey, TElement>;
