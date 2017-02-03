@@ -1859,8 +1859,14 @@
     };
 
     Enumerable.prototype.firstOrDefault = function (predicate, defaultValue) {
-        if (defaultValue === undefined) defaultValue = null;
-        if (predicate != null) return this.where(predicate).firstOrDefault(null, defaultValue);
+        if (predicate) {
+            if (typeof predicate === Types.Function)
+              return this.where(predicate).firstOrDefault(null, defaultValue);
+
+            defaultValue = predicate;
+        }
+
+        defaultValue = defaultValue || null;
 
         var value;
         var found = false;
