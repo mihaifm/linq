@@ -26,7 +26,7 @@ declare namespace Enumerable {
   export function rangeDown(start: number, count: number, step?: number): IEnumerable<number>;
   export function rangeTo(start: number, to: number, step?: number): IEnumerable<number>;
   export function repeat<T>(element: T, count?: number): IEnumerable<T>;
-  export function repeatWithFinalize<T>(initializer: () => T, finalizer: (element) => void): IEnumerable<T>;
+  export function repeatWithFinalize<T>(initializer: () => T, finalizer: (element: T) => void): IEnumerable<T>;
   export function generate<T>(func: () => T, count?: number): IEnumerable<T>;
   export function toInfinity(start?: number, step?: number): IEnumerable<number>;
   export function toNegativeInfinity(start?: number, step?: number): IEnumerable<number>;
@@ -34,7 +34,7 @@ declare namespace Enumerable {
   export function defer<T>(enumerableFactory: () => IEnumerable<T>): IEnumerable<T>;
 
   export interface IEnumerable<T> {
-    constructor(getEnumerator: () => IEnumerator<T>);
+    constructor(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     getEnumerator(): IEnumerator<T>;
 
     // Extension Methods
@@ -63,12 +63,12 @@ declare namespace Enumerable {
     merge<TResult>(...params: IEnumerable<T>[]): IEnumerable<T>;
     merge<TResult>(...params: { length: number;[x: number]: T; }[]): IEnumerable<T>;
     merge<TResult>(...params: T[][]): IEnumerable<T>;
-    join<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
-    join<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
-    join<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
-    groupJoin<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
-    groupJoin<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
-    groupJoin<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TKey) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    join<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    join<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    join<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    groupJoin<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    groupJoin<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
+    groupJoin<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
     all(predicate: (element: T) => boolean): boolean;
     any(predicate?: (element: T) => boolean): boolean;
     isEmpty(): boolean;
