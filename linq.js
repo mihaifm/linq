@@ -2152,6 +2152,25 @@
         return array;
     };
 
+    /* Iterator (ES6 for..of) support */
+    if (typeof Symbol !== 'undefined' && typeof Symbol.iterator !== 'undefined') {
+        Enumerable.prototype[Symbol.iterator] = function () {
+            var enumerator = this.getEnumerator();
+            return {
+                next: function () {
+                    if (enumerator.moveNext()) {
+                        return {
+                            done: false,
+                            value: enumerator.current()
+                        };
+                    } else {
+                        return { done: true };
+                    }
+                }
+            };
+        };
+    }
+
     // Overload:function(keySelector)
     // Overload:function(keySelector, elementSelector)
     // Overload:function(keySelector, elementSelector, compareSelector)
