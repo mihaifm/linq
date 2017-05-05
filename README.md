@@ -20,4 +20,4 @@ Not much:
 
 #### License
 
-[MIT License] (http://opensource.org/licenses/MIT)
+[MIT License](http://opensource.org/licenses/MIT)
