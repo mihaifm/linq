@@ -5,7 +5,7 @@ var callback = function(err, report) {
 }
 tr.run({
     code: "./linq.min.js",
-    tests: "./test/linq.min.qunit-test.js"
+    tests: "./test/linq.qunit-test.js"
 }, callback);
 
 tr.run({
@@ -81,4 +81,9 @@ tr.run({
 tr.run({
     code: "./linq.min.js",
     tests: "./test/whereSelectEnumerable.js"
+}, callback);
+
+tr.run({
+    code: "./linq.min.js",
+    tests: "./test/iterator.js"
 }, callback);
