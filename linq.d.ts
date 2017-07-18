@@ -117,8 +117,7 @@ declare namespace Enumerable {
     reverse(): IEnumerable<T>;
     shuffle(): IEnumerable<T>;
     weightedSample(weightSelector: (element: T) => number): IEnumerable<T>;
-    // truly, return type is IEnumerable<IGrouping<TKey, T>> but Visual Studio + TypeScript Compiler can't compile.
-    groupBy<TKey>(keySelector: (element: T) => TKey): IEnumerable<IGrouping<TKey, any>>;
+    groupBy<TKey>(keySelector: (element: T) => TKey): IEnumerable<IGrouping<TKey, T>>;
     groupBy<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): IEnumerable<IGrouping<TKey, TElement>>;
     groupBy<TKey, TElement, TResult>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult): IEnumerable<TResult>;
     groupBy<TKey, TElement, TResult, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult, compareSelector: (element: T) => TCompare): IEnumerable<TResult>;
