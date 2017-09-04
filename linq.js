@@ -1,10 +1,6 @@
 ﻿/*--------------------------------------------------------------------------
  * linq.js - LINQ for JavaScript
- * ver 3.0.4-Beta5 (Jun. 20th, 2013)
- *
- * created and maintained by neuecc <ils@neue.cc>
  * licensed under MIT License
- * http://linqjs.codeplex.com/
  *------------------------------------------------------------------------*/
 
 (function (root, undefined) {
