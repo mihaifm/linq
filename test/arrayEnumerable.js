@@ -65,6 +65,7 @@ test("firstOrDefault", function () {
     equal(arraySequence.firstOrDefault("$==-1", -100), -100);
     equal(emptySequence.firstOrDefault(null, -100), -100);
     equal(emptySequence.firstOrDefault("$==100", -100), -100);
+    equal(emptySequence.firstOrDefault(15), 15);
 });
 
 test("last", function () {
@@ -90,6 +91,7 @@ test("lastOrDefault", function () {
     equal(arraySequence.lastOrDefault("$==-1", -100), -100);
     equal(emptySequence.lastOrDefault(null, -100), -100);
     equal(emptySequence.lastOrDefault("$==100", -100), -100);
+    equal(emptySequence.lastOrDefault(15), 15);
 });
 
 test("skip", function () {

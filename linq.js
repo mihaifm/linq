@@ -1860,10 +1860,10 @@
 
     Enumerable.prototype.firstOrDefault = function (predicate, defaultValue) {
         if (predicate) {
-            if (typeof predicate === Types.Function)
-              return this.where(predicate).firstOrDefault(null, defaultValue);
+            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function)
+                return this.where(predicate).firstOrDefault(null, defaultValue);
 
-            defaultValue = predicate;
+                defaultValue = predicate;
         }
 
         defaultValue = defaultValue || null;
@@ -1897,8 +1897,14 @@
     // Overload:function(defaultValue)
     // Overload:function(defaultValue,predicate)
     Enumerable.prototype.lastOrDefault = function (predicate, defaultValue) {
-        if (defaultValue === undefined) defaultValue = null;
-        if (predicate != null) return this.where(predicate).lastOrDefault(null, defaultValue);
+        if (predicate) {
+            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function)
+              return this.where(predicate).lastOrDefault(null, defaultValue);
+
+            defaultValue = predicate;
+        }
+
+        defaultValue = defaultValue || null;
 
         var value;
         var found = false;

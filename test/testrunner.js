@@ -5,7 +5,7 @@ var callback = function(err, report) {
 }
 tr.run({
     code: "./linq.min.js",
-    tests: "./test/linq.min.qunit-test.js"
+    tests: "./test/linq.qunit-test.js"
 }, callback);
 
 tr.run({

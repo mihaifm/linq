@@ -2,7 +2,7 @@
   "name": "linq",
   "author": "Mihai Ciuraru <mihaixc@gmail.com>",
   "description": "linq.js - LINQ for JavaScript library packaged for node.js",
-  "version": "3.0.8",
+  "version": "3.0.9",
   "homepage": "https://github.com/mihaifm/linq",
   "repository": {
     "type": "git",
@@ -18,7 +18,7 @@
   "dependencies": {},
   "devDependencies": {
     "node-minify": "^1.2.0",
-    "qunit": "~0.5.18"
+    "qunit": "~0.6.0"
   },
   "optionalDependencies": {},
   "engines": {

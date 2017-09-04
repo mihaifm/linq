@@ -1,5 +1,3 @@
-// Typings for linq.js, ver 3.0.4-Beta5
-
 declare namespace Enumerable {
   export var Utils: {
     createLambda(expression: any): (...params: any[]) => any;
@@ -159,8 +157,7 @@ declare namespace Enumerable {
     asEnumerable(): IEnumerable<T>;
     cast<TResult>(): IEnumerable<TResult>;
     toArray(): T[];
-    // truly, return type is ILookup<TKey, T> but Visual Studio + TypeScript Compiler can't compile. 
-    toLookup<TKey>(keySelector: (element: T) => TKey): ILookup<TKey, any>;
+    toLookup<TKey>(keySelector: (element: T) => TKey): ILookup<TKey, T>;
     toLookup<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): ILookup<TKey, TElement>;
     toLookup<TKey, TElement, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, compareSelector: (key: TKey) => TCompare): ILookup<TKey, TElement>;
     toObject(keySelector: (element: T) => any, elementSelector?: (element: T) => any): Object;
