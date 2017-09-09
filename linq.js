@@ -1802,7 +1802,7 @@
     // Overload:function(selector)
     Enumerable.prototype.sum = function (selector) {
         if (selector == null) selector = Functions.Identity;
-        return this.select(selector).aggregate(0, function (a, b) { return a + b; });
+        return this.select(selector).aggregate(0, function (a, b) { return Number(a) + Number(b); });
     };
 
     /* Paging Methods */
