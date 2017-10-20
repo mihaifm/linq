@@ -8,14 +8,14 @@ console.log('\nfirst step of Lambda Expression\n');
 // Anonymous function
 Enumerable.range(1, 3).select(function(value, index) { return index + ':' + value }).log().toJoinedString();
 // String like Lambda Expression (arguments => expression)
-Enumerable.range(1, 3).select("value,index=>index+':'+value").log().toJoinedString();
+Enumerable.range(1, 3).select((value, index) => index + ':' + value).log().toJoinedString();
 
 // If the number of arguments is one , can use default iterator variable '$'
-Enumerable.range(1, 3).select("i=>i*2").log().toJoinedString();
+Enumerable.range(1, 3).select(i => i * 2).log().toJoinedString();
 Enumerable.range(1, 3).select("$*2").log().toJoinedString(); // same
 
 // "" is shortcut of "x => x" (identity function)
-Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", "outer,inner=>outer*inner").log().toJoinedString();
+Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", (outer, inner) => outer * inner).log().toJoinedString();
 
 
 
@@ -117,7 +117,7 @@ Enumerable.matches(input, "ab(.)d", "i").forEach(function(match)
 console.log('\nLazyEvaluation and InfinityList\n');
 
 // first radius of circle's area over 10000
-var result = Enumerable.toInfinity(1).where("r=>r*r*Math.PI>10000").first();
+var result = Enumerable.toInfinity(1).where(r => r * r * Math.PI > 10000).first();
 console.log(result);
 
 
