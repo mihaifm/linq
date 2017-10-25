@@ -16,16 +16,16 @@ Enumerable.Range(1, 10)
 
 // linq.js - anonymous function
 Enumerable.Range(1, 10)
-    .Where(function(i) { return i % 3 == 0; })
-    .Select(function(i) { return i * 10; });
+    .where(function(i) { return i % 3 == 0; })
+    .select(function(i) { return i * 10; });
 ```
 
 ```js
-// C# LINQ  - lambda
+// C# LINQ - lambda
 Enumerable.Range(1, 10).Where(i => i % 3 == 0).Select(i => i * 10);
 
-// linq.js - lambda expression
-Enumerable.Range(1, 10).Where("i => i % 3 == 0").Select("i => i * 10");
+// linq.js - arrow function
+Enumerable.range(1, 10).where(i => i % 3 == 0).select(i => i * 10);
 ```
 
 ```js
@@ -33,7 +33,7 @@ Enumerable.Range(1, 10).Where("i => i % 3 == 0").Select("i => i * 10");
 array.Select((val, i) => new { Value = val, Index = i });
 
 // linq.js - object literal
-Enumerable.From(array).Select("val,i=>{Value:val, Index:i}");
+Enumerable.from(array).select((val, i) => ({ value: val, index: i}));
 ```
 
 See [sample/tutorial.js](https://github.com/mihaifm/linq/blob/master/sample/tutorial.js) for more examples.
