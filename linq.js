@@ -1862,7 +1862,7 @@
                 defaultValue = predicate;
         }
 
-        defaultValue = defaultValue || null;
+        if (defaultValue === undefined) defaultValue = null;
 
         var value;
         var found = false;
@@ -1900,7 +1900,7 @@
             defaultValue = predicate;
         }
 
-        defaultValue = defaultValue || null;
+        if (defaultValue === undefined) defaultValue = null;
 
         var value;
         var found = false;

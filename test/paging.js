@@ -12,6 +12,11 @@ test("elementAt", function () {
 });
 
 test("elementAtOrDefault", function () {
+    actual = Enumerable.range(1, 10).elementAtOrDefault(3, 0);
+    equal(actual, 4);
+    actual = Enumerable.range(1, 10).elementAtOrDefault(31, 0);
+    equal(actual, 0);
+
     actual = Enumerable.range(1, 10).elementAtOrDefault(3, "foo");
     equal(actual, 4);
     actual = Enumerable.range(1, 10).elementAtOrDefault(31, "foo");
@@ -26,6 +31,11 @@ test("first", function () {
 });
 
 test("firstOrDefault", function () {
+    actual = Enumerable.range(1, 10).firstOrDefault(null, 0);
+    equal(actual, 1);
+    actual = Enumerable.range(1, 10).skip(11).firstOrDefault(null, 0);
+    equal(actual, 0);
+
     actual = Enumerable.range(1, 10).firstOrDefault(null, 4);
     equal(actual, 1);
     actual = Enumerable.range(1, 10).skip(11).firstOrDefault(null, 4);
@@ -49,6 +59,11 @@ test("last", function () {
 });
 
 test("lastOrDefault", function () {
+    actual = Enumerable.range(1, 10).lastOrDefault(null, 0);
+    equal(actual, 10);
+    actual = Enumerable.range(1, 10).skip(11).lastOrDefault(null, 0);
+    equal(actual, 0);
+
     actual = Enumerable.range(1, 10).lastOrDefault(null, 34);
     equal(actual, 10);
     actual = Enumerable.range(1, 10).skip(11).lastOrDefault(null, 34);
@@ -72,6 +87,11 @@ test("single", function () {
 });
 
 test("singleOrDefault", function () {
+    actual = Enumerable.range(1, 1).singleOrDefault(null, 0);
+    equal(actual, 1);
+    actual = Enumerable.range(1, 10).skip(11).singleOrDefault(null, 0);
+    equal(actual, 0);
+
     actual = Enumerable.range(1, 1).singleOrDefault(null, 34);
     equal(actual, 1);
     actual = Enumerable.range(1, 10).skip(11).singleOrDefault(null, 34);
