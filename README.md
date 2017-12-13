@@ -15,7 +15,7 @@ Enumerable.Range(1, 10)
     .Select(delegate(int i) { return i * 10; });
 
 // linq.js - anonymous function
-Enumerable.Range(1, 10)
+Enumerable.range(1, 10)
     .where(function(i) { return i % 3 == 0; })
     .select(function(i) { return i * 10; });
 ```
