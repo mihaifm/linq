@@ -229,6 +229,7 @@ declare namespace Enumerable {
 
   export interface IGrouping<TKey, TElement> extends IEnumerable<TElement> {
     key(): TKey;
+    getSource(): TElement[];
   }
 }
 
