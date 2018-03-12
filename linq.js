@@ -1855,14 +1855,12 @@
     };
 
     Enumerable.prototype.firstOrDefault = function (predicate, defaultValue) {
-        if (predicate) {
-            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function)
-                return this.where(predicate).firstOrDefault(null, defaultValue);
-
-                defaultValue = predicate;
+        if (predicate !== undefined) {
+            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function) {
+                return this.where(predicate).firstOrDefault(undefined, defaultValue);
+            }
+            defaultValue = predicate;
         }
-
-        if (defaultValue === undefined) defaultValue = null;
 
         var value;
         var found = false;
@@ -1890,17 +1888,13 @@
         return value;
     };
 
-    // Overload:function(defaultValue)
-    // Overload:function(defaultValue,predicate)
     Enumerable.prototype.lastOrDefault = function (predicate, defaultValue) {
-        if (predicate) {
-            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function)
-              return this.where(predicate).lastOrDefault(null, defaultValue);
-
+        if (predicate !== undefined) {
+            if (typeof predicate === Types.Function || typeof Utils.createLambda(predicate) === Types.Function) {
+                return this.where(predicate).lastOrDefault(undefined, defaultValue);
+            }
             defaultValue = predicate;
         }
-
-        if (defaultValue === undefined) defaultValue = null;
 
         var value;
         var found = false;
@@ -2601,10 +2595,10 @@
     };
 
     ArrayEnumerable.prototype.firstOrDefault = function (predicate, defaultValue) {
-        if (defaultValue === undefined) defaultValue = null;
-        if (predicate != null) {
+        if (predicate !== undefined) {
             return Enumerable.prototype.firstOrDefault.apply(this, arguments);
         }
+        defaultValue = predicate;
 
         var source = this.getSource();
         return source.length > 0 ? source[0] : defaultValue;
@@ -2618,10 +2612,10 @@
     };
 
     ArrayEnumerable.prototype.lastOrDefault = function (predicate, defaultValue) {
-        if (defaultValue === undefined) defaultValue = null;
-        if (predicate != null) {
+        if (predicate !== undefined) {
             return Enumerable.prototype.lastOrDefault.apply(this, arguments);
         }
+        defaultValue = predicate;
 
         var source = this.getSource();
         return source.length > 0 ? source[source.length - 1] : defaultValue;

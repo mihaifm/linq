@@ -31,23 +31,34 @@ test("first", function () {
 });
 
 test("firstOrDefault", function () {
-    actual = Enumerable.range(1, 10).firstOrDefault(null, 0);
-    strictEqual(actual, 1);
-    actual = Enumerable.range(1, 10).skip(11).firstOrDefault(null, 0);
-    strictEqual(actual, 0);
+    var nonEmpty = Enumerable.range(1, 10);
+    var empty = Enumerable.empty();
 
-    actual = Enumerable.range(1, 10).firstOrDefault(null, 4);
-    strictEqual(actual, 1);
-    actual = Enumerable.range(1, 10).skip(11).firstOrDefault(null, 4);
-    strictEqual(actual, 4);
+    // No arguments.
+    strictEqual(nonEmpty.firstOrDefault(), 1);
+    strictEqual(empty.firstOrDefault(), undefined);
 
-    actual = Enumerable.range(1, 10).firstOrDefault("i=>i*3==6", 4);
-    strictEqual(actual, 2);
-    actual = Enumerable.range(1, 10).firstOrDefault("i=>i>13", 40);
-    strictEqual(actual, 40);
+    // No predicate.
+    strictEqual(nonEmpty.firstOrDefault(0), 1);
+    strictEqual(empty.firstOrDefault(0), 0);
+    strictEqual(empty.firstOrDefault(undefined), undefined);
 
-    Enumerable.range(1, 10).firstOrDefault().is(1);
-    (Enumerable.empty().firstOrDefault() === null).isTrue();
+    // "null" predicate.
+    strictEqual(nonEmpty.firstOrDefault(null, 0), 1);
+    strictEqual(empty.firstOrDefault(null), undefined); // Because "null" is treated as noop predicate.
+    strictEqual(empty.firstOrDefault(null, 0), 0);
+    strictEqual(empty.firstOrDefault(null, null), null);
+    strictEqual(empty.firstOrDefault(null, undefined), undefined);
+
+    // No default value.
+    strictEqual(nonEmpty.firstOrDefault("i=>true"), 1);
+    strictEqual(empty.firstOrDefault("i=>true"), undefined);
+
+    // Both arguments.
+    strictEqual(nonEmpty.firstOrDefault("i=>true", 0), 1);
+    strictEqual(empty.firstOrDefault("i=>true", 0), 0);
+    strictEqual(empty.firstOrDefault("i=>true", null), null);
+    strictEqual(empty.firstOrDefault("i=>true", undefined), undefined);
 });
 
 test("last", function () {
@@ -59,23 +70,34 @@ test("last", function () {
 });
 
 test("lastOrDefault", function () {
-    actual = Enumerable.range(1, 10).lastOrDefault(null, 0);
-    strictEqual(actual, 10);
-    actual = Enumerable.range(1, 10).skip(11).lastOrDefault(null, 0);
-    strictEqual(actual, 0);
+    var nonEmpty = Enumerable.range(1, 10);
+    var empty = Enumerable.empty();
 
-    actual = Enumerable.range(1, 10).lastOrDefault(null, 34);
-    strictEqual(actual, 10);
-    actual = Enumerable.range(1, 10).skip(11).lastOrDefault(null, 34);
-    strictEqual(actual, 34);
+    // No arguments.
+    strictEqual(nonEmpty.lastOrDefault(), 10);
+    strictEqual(empty.lastOrDefault(), undefined);
 
-    actual = Enumerable.range(1, 10).lastOrDefault("i=>i*3<=6", 4);
-    strictEqual(actual, 2);
-    actual = Enumerable.range(1, 10).lastOrDefault("i=>i>13", 40);
-    strictEqual(actual, 40);
+    // No predicate.
+    strictEqual(nonEmpty.lastOrDefault(0), 10);
+    strictEqual(empty.lastOrDefault(0), 0);
+    strictEqual(empty.lastOrDefault(undefined), undefined);
 
-    Enumerable.range(1, 10).lastOrDefault().is(10);
-    (Enumerable.empty().lastOrDefault() === null).isTrue();
+    // "null" predicate.
+    strictEqual(nonEmpty.lastOrDefault(null, 0), 10);
+    strictEqual(empty.lastOrDefault(null), undefined); // Because "null" is treated as noop predicate.
+    strictEqual(empty.lastOrDefault(null, 0), 0);
+    strictEqual(empty.lastOrDefault(null, null), null);
+    strictEqual(empty.lastOrDefault(null, undefined), undefined);
+
+    // No default value.
+    strictEqual(nonEmpty.lastOrDefault("i=>true"), 10);
+    strictEqual(empty.lastOrDefault("i=>true"), undefined);
+
+    // Both arguments.
+    strictEqual(nonEmpty.lastOrDefault("i=>true", 0), 10);
+    strictEqual(empty.lastOrDefault("i=>true", 0), 0);
+    strictEqual(empty.lastOrDefault("i=>true", null), null);
+    strictEqual(empty.lastOrDefault("i=>true", undefined), undefined);
 });
 
 test("single", function () {

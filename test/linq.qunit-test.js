@@ -79,7 +79,7 @@ test("function.isNot", function () {
 
 test("isTrue", function () {
     (true).isTrue();
-    (Enumerable.empty().firstOrDefault() === null).isTrue();
+    (Enumerable.empty().firstOrDefault() === undefined).isTrue();
 });
 
 test("isFalse", function () {

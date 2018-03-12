@@ -60,12 +60,31 @@ test("first", function () {
 });
 
 test("firstOrDefault", function () {
-    equal(arraySequence.firstOrDefault(), 1);
-    equal(arraySequence.firstOrDefault("$>=100", -100), 100);
-    equal(arraySequence.firstOrDefault("$==-1", -100), -100);
-    equal(emptySequence.firstOrDefault(null, -100), -100);
-    equal(emptySequence.firstOrDefault("$==100", -100), -100);
-    equal(emptySequence.firstOrDefault(15), 15);
+    // No arguments.
+    strictEqual(arraySequence.firstOrDefault(), 1);
+    strictEqual(emptySequence.firstOrDefault(), undefined);
+
+    // No predicate.
+    strictEqual(arraySequence.firstOrDefault(0), 1);
+    strictEqual(emptySequence.firstOrDefault(0), 0);
+    strictEqual(emptySequence.firstOrDefault(undefined), undefined);
+
+    // "null" predicate.
+    strictEqual(arraySequence.firstOrDefault(null, 0), 1);
+    strictEqual(emptySequence.firstOrDefault(null), undefined); // Because "null" is treated as noop predicate.
+    strictEqual(emptySequence.firstOrDefault(null, 0), 0);
+    strictEqual(emptySequence.firstOrDefault(null, null), null);
+    strictEqual(emptySequence.firstOrDefault(null, undefined), undefined);
+
+    // No default value.
+    strictEqual(arraySequence.firstOrDefault("i=>true"), 1);
+    strictEqual(emptySequence.firstOrDefault("i=>true"), undefined);
+
+    // Both arguments.
+    strictEqual(arraySequence.firstOrDefault("i=>true", 0), 1);
+    strictEqual(emptySequence.firstOrDefault("i=>true", 0), 0);
+    strictEqual(emptySequence.firstOrDefault("i=>true", null), null);
+    strictEqual(emptySequence.firstOrDefault("i=>true", undefined), undefined);
 });
 
 test("last", function () {
@@ -86,12 +105,31 @@ test("last", function () {
 });
 
 test("lastOrDefault", function () {
-    equal(arraySequence.lastOrDefault(), 10000);
-    equal(arraySequence.lastOrDefault("$<=500", -100), 100);
-    equal(arraySequence.lastOrDefault("$==-1", -100), -100);
-    equal(emptySequence.lastOrDefault(null, -100), -100);
-    equal(emptySequence.lastOrDefault("$==100", -100), -100);
-    equal(emptySequence.lastOrDefault(15), 15);
+    // No arguments.
+    strictEqual(arraySequence.lastOrDefault(), 10000);
+    strictEqual(emptySequence.lastOrDefault(), undefined);
+
+    // No predicate.
+    strictEqual(arraySequence.lastOrDefault(0), 10000);
+    strictEqual(emptySequence.lastOrDefault(0), 0);
+    strictEqual(emptySequence.lastOrDefault(undefined), undefined);
+
+    // "null" predicate.
+    strictEqual(arraySequence.lastOrDefault(null, 0), 10000);
+    strictEqual(emptySequence.lastOrDefault(null), undefined); // Because "null" is treated as noop predicate.
+    strictEqual(emptySequence.lastOrDefault(null, 0), 0);
+    strictEqual(emptySequence.lastOrDefault(null, null), null);
+    strictEqual(emptySequence.lastOrDefault(null, undefined), undefined);
+
+    // No default value.
+    strictEqual(arraySequence.lastOrDefault("i=>true"), 10000);
+    strictEqual(emptySequence.lastOrDefault("i=>true"), undefined);
+
+    // Both arguments.
+    strictEqual(arraySequence.lastOrDefault("i=>true", 0), 10000);
+    strictEqual(emptySequence.lastOrDefault("i=>true", 0), 0);
+    strictEqual(emptySequence.lastOrDefault("i=>true", null), null);
+    strictEqual(emptySequence.lastOrDefault("i=>true", undefined), undefined);
 });
 
 test("skip", function () {
