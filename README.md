@@ -44,4 +44,4 @@ See [sample/tutorial.js](https://github.com/mihaifm/linq/blob/master/sample/tuto
 
 ### License
 
-[MIT License](http://opensource.org/licenses/MIT)
+[MIT License](https://github.com/mihaifm/linq/blob/master/LICENSE)
