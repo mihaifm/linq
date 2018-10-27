@@ -1,2 +1,7 @@
 .vscode
+.vs
 node_modules
+bin
+obj
+linq.min.js
+release/*

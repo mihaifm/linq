@@ -54,9 +54,9 @@ declare namespace Enumerable {
     where(predicate: (element: T, index: number) => boolean): IEnumerable<T>;
     choose(selector: (element: T, index: number) => T): IEnumerable<T>;
     ofType<TResult>(type: any): IEnumerable<TResult>;
-    zip<TResult>(second: IEnumerable<T>, resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>;
-    zip<TResult>(second: { length: number;[x: number]: T; }, resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>;
-    zip<TResult>(second: T[], resultSelector: (first: T, second: T, index: number) => TResult): IEnumerable<TResult>;
+    zip<U, TResult>(second: IEnumerable<U>, resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
+    zip<U, TResult>(second: { length: number;[x: number]: U; }, resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
+    zip<U, TResult>(second: U[], resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
     zip<TResult>(...params: any[]): IEnumerable<TResult>; // last one is selector
     merge<TResult>(...params: IEnumerable<T>[]): IEnumerable<T>;
     merge<TResult>(...params: { length: number;[x: number]: T; }[]): IEnumerable<T>;
