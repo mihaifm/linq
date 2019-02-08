@@ -140,8 +140,10 @@ declare namespace Enumerable {
     elementAtOrDefault(index: number, defaultValue?: T): T;
     first(predicate?: (element: T, index: number) => boolean): T;
     firstOrDefault(predicate?: (element: T, index: number) => boolean, defaultValue?: T): T;
+    firstOrDefault(defaultValue?: T): T;
     last(predicate?: (element: T, index: number) => boolean): T;
     lastOrDefault(predicate?: (element: T, index: number) => boolean, defaultValue?: T): T;
+    lastOrDefault(defaultValue?: T): T;
     single(predicate?: (element: T, index: number) => boolean): T;
     singleOrDefault(predicate?: (element: T, index: number) => boolean, defaultValue?: T): T;
     skip(count: number): IEnumerable<T>;
