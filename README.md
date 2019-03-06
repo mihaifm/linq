@@ -5,7 +5,17 @@ It contains all the origial .NET methods plus additional ones.
 
 ### Installation
 
+With npm:
+
     npm install linq
+
+CDN availability:
+
+|    CDN     | URL                                        |
+|-----------:|:-------------------------------------------|
+|    `unpkg` | <https://unpkg.com/linq/>                  |
+| `jsDelivr` | <https://jsdelivr.com/package/npm/linq>    |
+|    `packd` | <https://bundle.run/linq@latest?name=linq> |
 
 ### Examples
 ```js
