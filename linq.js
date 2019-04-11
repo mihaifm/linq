@@ -2386,6 +2386,22 @@
         });
     };
 
+    Enumerable.prototype[Symbol.iterator] = function () {
+        var enumerator = this.getEnumerator();
+        return {
+            next: function () {
+                if (enumerator.moveNext()) {
+                    return {
+                        done: false,
+                        value: enumerator.current()
+                    };
+                } else {
+                    return { done: true };
+                }
+            }
+        };
+    };
+
     /* Error Handling Methods */
 
     Enumerable.prototype.catchError = function (handler) {

@@ -31,7 +31,7 @@ declare namespace Enumerable {
   export function unfold<T>(seed: T, func: (value: T) => T): IEnumerable<T>;
   export function defer<T>(enumerableFactory: () => IEnumerable<T>): IEnumerable<T>;
 
-  export interface IEnumerable<T> {
+  export interface IEnumerable<T> extends Iterable<T> {
     constructor(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     getEnumerator(): IEnumerator<T>;
 
