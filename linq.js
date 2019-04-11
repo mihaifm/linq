@@ -107,7 +107,11 @@
 
         dispose: function (obj) {
             if (obj != null) obj.dispose();
-        }
+        },
+
+        hasNativeIteratorSupport: function () {
+            return typeof Symbol !== 'undefined' && typeof Symbol.iterator !== 'undefined';
+        },
     };
 
     // IEnumerator State
@@ -2386,21 +2390,24 @@
         });
     };
 
-    Enumerable.prototype[Symbol.iterator] = function () {
-        return {
-            enumerator: this.getEnumerator(),
-            next: function () {
-                if (this.enumerator.moveNext()) {
-                    return {
-                        done: false,
-                        value: this.enumerator.current()
-                    };
-                } else {
-                    return { done: true };
+    /* Iterator (ES6 for..of) support */
+    if (Utils.hasNativeIteratorSupport()) {
+        Enumerable.prototype[Symbol.iterator] = function () {
+            return {
+                enumerator: this.getEnumerator(),
+                next: function () {
+                    if (this.enumerator.moveNext()) {
+                        return {
+                            done: false,
+                            value: this.enumerator.current()
+                        };
+                    } else {
+                        return { done: true };
+                    }
                 }
-            }
+            };
         };
-    };
+    }
 
     /* Error Handling Methods */
 
