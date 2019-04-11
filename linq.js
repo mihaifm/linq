@@ -2387,13 +2387,13 @@
     };
 
     Enumerable.prototype[Symbol.iterator] = function () {
-        var enumerator = this.getEnumerator();
         return {
+            enumerator: this.getEnumerator(),
             next: function () {
-                if (enumerator.moveNext()) {
+                if (this.enumerator.moveNext()) {
                     return {
                         done: false,
-                        value: enumerator.current()
+                        value: this.enumerator.current()
                     };
                 } else {
                     return { done: true };
