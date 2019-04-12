@@ -111,7 +111,7 @@
 
         hasNativeIteratorSupport: function () {
             return typeof Symbol !== 'undefined' && typeof Symbol.iterator !== 'undefined';
-        },
+        }
     };
 
     // IEnumerator State

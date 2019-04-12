@@ -1,7 +1,7 @@
 ## linq
 This is a javascript implementation of the .NET [LINQ](https://msdn.microsoft.com/en-us/library/bb308959.aspx) library.
 
-It contains all the origial .NET methods plus additional ones.
+It contains all the original .NET methods plus a few additions.
 
 ### Installation
 
