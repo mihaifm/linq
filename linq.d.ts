@@ -4,6 +4,7 @@ declare namespace Enumerable {
     createEnumerable<T>(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     createEnumerator<T>(initialize: () => void, tryGetNext: () => boolean, dispose: () => void): IEnumerator<T>;
     extendTo(type: any): void;
+    hasNativeIteratorSupport(): boolean;
   };
   export function choice<T>(...params: T[]): IEnumerable<T>;
   export function cycle<T>(...params: T[]): IEnumerable<T>;
