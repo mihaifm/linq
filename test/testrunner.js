@@ -82,3 +82,8 @@ tr.run({
     code: "./linq.min.js",
     tests: "./test/whereSelectEnumerable.js"
 }, callback);
+
+tr.run({
+    code: "./linq.min.js",
+    tests: "./test/iterator.js"
+}, callback);
