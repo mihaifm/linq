@@ -1,53 +1,56 @@
 var Enumerable = require('../linq');
 
-/////////////////////////////////
-//first step of Lambda Expression
+/////////////////////////////
+// Simple Lambda Expressions
 
-console.log('\nfirst step of Lambda Expression\n');
+console.log('# Simple Lambda Expressions\n');
 
 // Anonymous function
 Enumerable.range(1, 3).select(function(value, index) { return index + ':' + value }).log().toJoinedString();
-// String like Lambda Expression (arguments => expression)
+
+// Arrow function syntax
 Enumerable.range(1, 3).select((value, index) => index + ':' + value).log().toJoinedString();
 
-// If the number of arguments is one , can use default iterator variable '$'
-Enumerable.range(1, 3).select(i => i * 2).log().toJoinedString();
-Enumerable.range(1, 3).select("$*2").log().toJoinedString(); // same
+// Lambdas can also be passed as strings
+Enumerable.range(1, 3).select("(value, index) => index + '/' + value").log().toJoinedString();
 
-// "" is shortcut of "x => x" (identity function)
+// If the number of arguments is one, we can use default iterator variable '$'
+Enumerable.range(1, 3).select("$*2").log().toJoinedString(); // same as i => i * 2
+
+// "" is a shortcut for "x => x" (identity function)
 Enumerable.range(4, 7).join(Enumerable.range(8, 5), "", "", (outer, inner) => outer * inner).log().toJoinedString();
 
 
+///////////////////////////////
+// Scope of lambda expressions
 
-/////////////////////////////
-//Scope of lambda expression
+console.log('\n# Scope of lambda expressions\n');
 
-console.log('\nScope of lambda expression\n');
+// lambda expressions cannot access the closure when the string syntax is used
+try {
+  var number = 3;
+  Enumerable.range(1,10).where("$ == number").log().toJoinedString();
+} catch (e) {
+  console.log("can't find number");
+}
 
-var number = 3;
-// Can't Find number | lambda expression can use only global variable
-// Enumerable.range(1,10).where("$ == number").log().toJoinedString();
-
-// use anonymous founction, can capture variable
+// use anonymous function to capture variable
 Enumerable.range(1,10).where(function(i){return i == number}).log().toJoinedString();
 
-//////////////////////////////////////////
-//from(Object) -> convert to keyvaluePair
 
-console.log('\nfrom(Object) -> convert to keyvaluePair\n');
+/////////////////////////////
+// Initializing from objects
+
+console.log('\n# Initializing from objects\n');
 
 var object = {foo:"a", "bar":100, "foobar":true};
-Enumerable.from(object).forEach(function(obj)
-{
-    console.log(obj.key + ":" + obj.value);
-});
+Enumerable.from(object).forEach(function(obj) { console.log(obj.key + ":" + obj.value) });
 
 
+/////////////////////////////////////
+// Continue and break when iterating
 
-//////////////////////////////
-//forEach (continue and break)
-
-console.log('\nforEach (continue and break)\n');
+console.log('\n# Continue and break when iterating\n');
 
 Enumerable.repeat("foo", 10).forEach(function(value, index)
 {
@@ -57,11 +60,10 @@ Enumerable.repeat("foo", 10).forEach(function(value, index)
 });
 
 
+//////////////////////////////////
+// Grouping and ref/value compare
 
-/////////////////////////////////
-//Grouping and ref/value compare
-
-console.log('\nGrouping and ref/value comparen\n');
+console.log('\n# Grouping and ref/value compare\n');
 
 // ref compare
 console.log((new Date(2000, 1, 1) == new Date(2000, 1, 1))); // false
@@ -74,7 +76,7 @@ var objects = [
     { Date: new Date(2000, 1, 1), Id: 3 }
 ]
 
-// ref compare, can not grouping
+// ref compare, cannot do grouping
 Enumerable.from(objects)
     .groupBy("$.Date", "$.Id",
         function (key, group) { return { date: key, ids: group.toJoinedString(',')} })
@@ -82,7 +84,7 @@ Enumerable.from(objects)
 
 console.log("------");
 
-// use fourth argument(compareSelector)
+// use fourth argument to groupBy (compareSelector)
 Enumerable.from(objects)
     .groupBy("$.Date", "$.Id",
         function (key, group) { return { date: key, ids: group.toJoinedString(',')} },
@@ -90,11 +92,10 @@ Enumerable.from(objects)
     .log("$.date + ':' + $.ids").toJoinedString();
 
 
-
 //////////////////////////////
-//Regular Expression matches
+// Regular Expression matches
 
-console.log('\nRegular Expression matches\n');
+console.log('\n# Regular Expression matches\n');
 
 // Enumerable.matches return Enumerable<MatchObject>
 
@@ -110,22 +111,20 @@ Enumerable.matches(input, "ab(.)d", "i").forEach(function(match)
 });
 
 
+///////////////////////////////////
+// LazyEvaluation and InfinityList
 
-//////////////////////////////////
-//LazyEvaluation and InfinityList
+console.log('\n# LazyEvaluation and InfinityList\n');
 
-console.log('\nLazyEvaluation and InfinityList\n');
-
-// first radius of circle's area over 10000
+// first radius of a circle with area over 10000
 var result = Enumerable.toInfinity(1).where(r => r * r * Math.PI > 10000).first();
 console.log(result);
 
 
+//////////////
+// Dictionary
 
-/////////////
-//Dictionary
-
-console.log('\nDictionary\n');
+console.log('\n# Dictionary\n');
 
 // sample class
 var cls = function (a, b)
@@ -138,7 +137,7 @@ var instanceB = new cls("b", 2000);
 
 // create blank dictionary
 var dict = Enumerable.empty().toDictionary();
-// create blank dictionary(use compareSelector)
+// create blank dictionary (using compareSelector)
 var dict = Enumerable.empty().toDictionary("","",function (x) { return x.a + x.b });
 
 dict.add(instanceA, "zzz");
@@ -153,13 +152,14 @@ dict.toEnumerable().forEach(function (kvp)
 });
 
 
+/////////////////////////////
+// Nondeterministic Programs
 
-/////////////////////////////////////////////
-//Nondeterministic Programs
+console.log('\n# Nondeterministic programs\n');
 
-console.log('\nNondeterministic Programs\n');
+// a puzzle from Structure and Interpretation of Computer Programs
+// http://sarabander.github.io/sicp/html/4_002e3.xhtml
 
-// from Structure and Interpretation of Computer Programs 4.3.2
 var apart = Enumerable.range(1, 5);
 var answers = apart
     .selectMany(function(baker){ return apart
