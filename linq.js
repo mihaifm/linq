@@ -306,6 +306,19 @@
                 return new ArrayEnumerable(obj);
             }
 
+            // iterable object
+            if (typeof Symbol !== 'undefined' && typeof obj[Symbol.iterator] !== 'undefined') {
+                return new Enumerable(function () {
+                    return new IEnumerator(
+                        Functions.Blank,
+                        function () {
+                            var next = obj.next();
+                            return (next.done ? false : (this.yieldReturn(next.value)));
+                        },
+                        Functions.Blank);
+                });
+            }
+
             // JScript's IEnumerable
             if (!(obj instanceof Object) && Utils.isIEnumerable(obj)) {
                 return new Enumerable(function () {
