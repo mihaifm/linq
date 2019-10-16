@@ -27,6 +27,17 @@ test("join", function ()
                 { Name: "tanaka", Math: 80, English: 99 },
                 { Name: "yoshida", Math: 94, English: 26}];
     deepEqual(actual, expected);
+
+    actual = Enumerable.from(math)
+        .join(english, "outer=>outer.key", "inner=>inner.key",
+            "(o,i)=>{return {Name:o.key, Math:o.value, English:i.value}}")
+        .toArray();
+
+    expected = [{ Name: "yamada", Math: 100, English: 73 },
+                { Name: "tanaka", Math: 80, English: 99 },
+                { Name: "yoshida", Math: 94, English: 26}];
+
+    deepEqual(actual, expected);
 });
 
 test("groupJoin", function ()

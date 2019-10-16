@@ -65,7 +65,7 @@
                 }
                 else {
                     var expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
-                    f = new Function(expr[1], "return " + expr[2]);
+                    f = new Function(expr[1], (expr[2].includes("return") ? expr[2] : "return " + expr[2]));
                     funcCache[expression] = f;
                     return f;
                 }
