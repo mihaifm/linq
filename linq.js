@@ -100,13 +100,9 @@
             },
 
         compare: function (a, b) {
-            if (typeof(a) === typeof(b) && typeof (a) === 'string') {
-                return a.localeCompare(b);
-            } else {
-                return (a === b) ? 0
-                    : (a > b) ? 1
-                        : -1;
-            }
+            return (a === b) ? 0
+                 : (a > b) ? 1
+                 : -1;
         },
 
         dispose: function (obj) {
