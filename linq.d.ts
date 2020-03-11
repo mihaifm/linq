@@ -112,7 +112,9 @@ declare namespace Enumerable {
     sequenceEqual(second: T[]): boolean;
     sequenceEqual<TCompare>(second: T[], compareSelector: (element: T) => TCompare): boolean;
     orderBy<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
+    orderBy<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number): IOrderedEnumerable<T>;
     orderByDescending<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
+    orderByDescending<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number): IOrderedEnumerable<T>;
     reverse(): IEnumerable<T>;
     shuffle(): IEnumerable<T>;
     weightedSample(weightSelector: (element: T) => number): IEnumerable<T>;
@@ -203,9 +205,11 @@ declare namespace Enumerable {
   }
 
   export interface IOrderedEnumerable<T> extends IEnumerable<T> {
-    createOrderedEnumerable<TKey>(keySelector: (element: T) => TKey, descending: boolean): IOrderedEnumerable<T>;
+    createOrderedEnumerable<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number, descending: boolean): IOrderedEnumerable<T>;
     thenBy<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
+    thenBy<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number): IOrderedEnumerable<T>;
     thenByDescending<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
+    thenByDescending<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number): IOrderedEnumerable<T>;
   }
 
   export interface IDisposableEnumerable<T> extends IEnumerable<T> {

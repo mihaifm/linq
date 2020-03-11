@@ -4,7 +4,7 @@ require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
 module("Ordering");
 
-var expected, actual; // will be removed
+var expected, actual;
 
 var list = [
     { a: 2, b: 4, c: 1 },
@@ -30,6 +30,11 @@ test("orderBy", function () {
     deepEqual(actual, [1, 7, 31, 51, 51, 85, 99, 823]);
 
     Enumerable.rangeTo(10, 1).orderBy("$%5").is(10, 5, 6, 1, 7, 2, 8, 3, 9, 4);
+
+    actual = ['b', 'a', 'd', 'c'];
+    deepEqual(Enumerable.from(actual).orderBy().toArray(), ['a', 'b', 'c', 'd']);
+    deepEqual(Enumerable.from(actual).orderBy(x=>x, "(x,y)=>x.localeCompare(y)").toArray(), ['a', 'b', 'c', 'd']);
+    deepEqual(Enumerable.from(actual).orderBy(x=>x, (x,y)=>x<y).toArray(), ['d', 'c', 'b', 'a']);
 });
 
 test("orderByDescending", function () {
@@ -39,6 +44,10 @@ test("orderByDescending", function () {
     deepEqual(actual, [823, 99, 85, 51, 51, 31, 7, 1]);
 
     Enumerable.rangeTo(1, 10).orderByDescending("$%5").is(4, 9, 3, 8, 2, 7, 1, 6, 5, 10);
+
+    actual = ['b', 'a', 'd', 'c'];
+    deepEqual(Enumerable.from(actual)
+        .orderByDescending(x=>x, (x, y)=>x < y ? -1 : +(x > y)).toArray(), ['d', 'c', 'b', 'a']);
 });
 
 test("thenBy", function () {
@@ -69,6 +78,13 @@ test("thenBy", function () {
         { a: "n", b: "d", c: "q" },
         { a: "z", b: "e", c: "e" }
     ];
+    deepEqual(actual, expected);
+
+    actual = Enumerable.from(strlist)
+        .orderBy(l=>l.a)
+        .thenBy(l=>l, (x,y) => x.b < y.b ? -1 : x.b > y.b ? 1 : x.c < y.c ? -1 : +(x.c > y.c))
+        .toArray();
+
     deepEqual(actual, expected);
 });
 
