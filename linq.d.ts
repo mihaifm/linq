@@ -32,7 +32,7 @@ declare namespace Enumerable {
   export function unfold<T>(seed: T, func: (value: T) => T): IEnumerable<T>;
   export function defer<T>(enumerableFactory: () => IEnumerable<T>): IEnumerable<T>;
 
-  export interface IEnumerable<T> extends Iterable<T> {
+  export interface IEnumerable<T> {
     constructor(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     getEnumerator(): IEnumerator<T>;
 
@@ -205,7 +205,7 @@ declare namespace Enumerable {
   }
 
   export interface IOrderedEnumerable<T> extends IEnumerable<T> {
-    createOrderedEnumerable<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number, descending: boolean): IOrderedEnumerable<T>;
+    createOrderedEnumerable<TKey>(keySelector: (element: T) => TKey, comparer?: (first: T, second: T) => number, descending?: boolean): IOrderedEnumerable<T>;
     thenBy<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
     thenBy<TKey>(keySelector: (element: T) => TKey, comparer: (first: T, second: T) => number): IOrderedEnumerable<T>;
     thenByDescending<TKey>(keySelector: (element: T) => TKey): IOrderedEnumerable<T>;
