@@ -34,7 +34,8 @@ test("orderBy", function () {
     actual = ['b', 'a', 'd', 'c'];
     deepEqual(Enumerable.from(actual).orderBy().toArray(), ['a', 'b', 'c', 'd']);
     deepEqual(Enumerable.from(actual).orderBy(x=>x, "(x,y)=>x.localeCompare(y)").toArray(), ['a', 'b', 'c', 'd']);
-    deepEqual(Enumerable.from(actual).orderBy(x=>x, (x,y)=>x<y).toArray(), ['d', 'c', 'b', 'a']);
+    deepEqual(Enumerable.from(actual).orderBy(x=>x, (x,y)=>(x < y) ? 1 : (x == y) ? 0 : -1).toArray(), ['d', 'c', 'b', 'a']);
+    deepEqual(Enumerable.from(actual).orderBy(x=>x, (x,y)=>(x < y) ? 1 : -1).toArray(), ['d', 'c', 'b', 'a']);
 });
 
 test("orderByDescending", function () {
