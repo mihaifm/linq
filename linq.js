@@ -230,6 +230,31 @@
         }
     };
 
+    Enumerable.Utils.recallFrom = function (type) {
+        var typeProto = type.prototype;
+        var enumerableProto;
+
+        if (type === Array) {
+            enumerableProto = ArrayEnumerable.prototype;
+            delete typeProto.getSource;
+        }
+        else {
+            enumerableProto = Enumerable.prototype;
+            delete typeProto.getEnumerator;
+        }
+
+        for (var methodName in enumerableProto) {
+            var func = enumerableProto[methodName];
+
+            if (typeProto[methodName + 'ByLinq']) {
+                delete typeProto[methodName + 'ByLinq'];
+            }
+            else if (typeProto[methodName] == func && func instanceof Function) {
+                delete typeProto[methodName];
+            }
+        }
+    };
+
     // Generator
 
     Enumerable.choice = function () // variable argument
