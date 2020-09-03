@@ -1,13 +1,8 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, equal, ok} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Dictionary");
+testModule("Dictionary");
 
-var expected, actual; // will be removed
-
-var result;
-var correct;
 var aComparer = function (x) { return x.a }
 var obj1 = { a: 1 }
 var obj1_ = { a: 1 }

@@ -1,21 +1,18 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, equal, ok} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Convert");
-
-var expected, actual; // will be removed
+testModule("Convert");
 
 test("toArray", function ()
 {
-    actual = Enumerable.range(1, 10).toArray();
+    let actual = Enumerable.range(1, 10).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 });
 
 test("toLookup", function ()
 {
     var fileList = ["temp.xls", "temp2.xls", "temp.pdf", "temp.jpg", "temp2.pdf"];
-    actual = Enumerable.from(fileList).toLookup("file=>file.match(/\\.(.+$)/)[1]");
+    let actual = Enumerable.from(fileList).toLookup("file=>file.match(/\\.(.+$)/)[1]");
 
     deepEqual(["temp.xls", "temp2.xls"], actual.get("xls").toArray());
     deepEqual(["temp.pdf", "temp2.pdf"], actual.get("pdf").toArray());
@@ -44,14 +41,14 @@ test("toLookup", function ()
 
 test("toObject", function ()
 {
-    actual = Enumerable.range(1, 3).toObject("i=>'foo'+i", "i=>i*4");
+    let actual = Enumerable.range(1, 3).toObject("i=>'foo'+i", "i=>i*4");
     deepEqual(actual, { foo1: 4, foo2: 8, foo3: 12 });
 });
 
 
 test("toDictionary", function ()
 {
-    actual = Enumerable.range(1, 3).toDictionary("i=>'foo'+i", "i=>i*4");
+    let actual = Enumerable.range(1, 3).toDictionary("i=>'foo'+i", "i=>i*4");
     equal(4, actual.get("foo1"));
     equal(8, actual.get("foo2"));
     equal(12, actual.get("foo3"));
@@ -64,7 +61,7 @@ test("toDictionary", function ()
 
 test("toJoinedString", function ()
 {
-    actual = Enumerable.range(1, 3).toJoinedString();
+    let actual = Enumerable.range(1, 3).toJoinedString();
     equal(actual, "123");
 
     actual = Enumerable.range(1, 3).toJoinedString("-");
@@ -76,7 +73,7 @@ test("toJoinedString", function ()
 
 test("toJSONString", function ()
 {
-    actual = Enumerable.from([{ a: 1, b: true }, { a: null, b: "aaa"}]).toJSONString();
+    let actual = Enumerable.from([{ a: 1, b: true }, { a: null, b: "aaa"}]).toJSONString();
     equal(actual, '[{"a":1,"b":true},{"a":null,"b":"aaa"}]');
 
     actual = Enumerable.range(1, 5).toJSONString();

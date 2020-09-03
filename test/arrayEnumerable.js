@@ -1,8 +1,7 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, strictEqual, equal, ok} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("ArrayEnumerable");
+testModule("ArrayEnumerable");
 
 var arraySequence = Enumerable.from([1, 10, 100, 1000, 10000]);
 var emptySequence = Enumerable.from([]);

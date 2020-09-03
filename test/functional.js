@@ -1,10 +1,7 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, equal} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Functional");
-
-var expected, actual; // will be removed
+testModule("Functional");
 
 test("letBind", function ()
 {
@@ -23,7 +20,7 @@ test("letBind", function ()
         });
     }).toArray();
     
-    l1.is(['1:2', '2:3', '3:4', '4:5']);
+    deepEqual(l1, ['1:2', '2:3', '3:4', '4:5']);
 
     var l2 = Enumerable.range(1, 5).letBind(function (a) {
         return Enumerable.from(a).zip(Enumerable.from(a).skip(1), function (x, y) {
@@ -31,9 +28,9 @@ test("letBind", function ()
         });
     }).toArray();
      
-    l2.is(['1:2', '2:3', '3:4', '4:5']);
+    deepEqual(l2, ['1:2', '2:3', '3:4', '4:5']);
 
-    l1.is(l2);
+    deepEqual(l1, l2);
 });
 
 test("share", function ()

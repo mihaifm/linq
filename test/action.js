@@ -1,15 +1,12 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Action");
-
-var expected, actual; // will be removed
+testModule("Action");
 
 test("doAction", function ()
 {
     var array = [];
-    actual = Enumerable.range(1, 10).doAction(function (i) { array.push(i) }).toArray();
+    let actual = Enumerable.range(1, 10).doAction(function (i) { array.push(i) }).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
     array = []
@@ -22,7 +19,7 @@ test("doAction", function ()
 
 test("forEach", function ()
 {
-    actual = [];
+    let actual = [];
     Enumerable.range(1, 10).forEach(function (i) { actual.push(i) });
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
@@ -45,7 +42,7 @@ test("forEach", function ()
 
 test("force", function ()
 {
-    var actual = [];
+    let actual = [];
     Enumerable.range(1, 10).doAction(function (i) { actual.push(i) }).force();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 });

@@ -1,22 +1,19 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Join");
-
-var expected, actual; // will be removed
+testModule("Join");
 
 test("join", function ()
 {
     var math = { yamada: 100, tanaka: 80, yoshida: 94 };
     var english = { yamada: 73, yoshida: 26, tanaka: 99 };
-    actual = Enumerable.from(math)
+    let actual = Enumerable.from(math)
         .join(english, "outer=>outer.key", "inner=>inner.key",
             "o,i=>{Name:o.key,Math:o.value,English:i.value}")
         .toArray();
-    expected = [{ Name: "yamada", Math: 100, English: 73 },
-                { Name: "tanaka", Math: 80, English: 99 },
-                { Name: "yoshida", Math: 94, English: 26}];
+    let expected = [{ Name: "yamada", Math: 100, English: 73 },
+                    { Name: "tanaka", Math: 80, English: 99 },
+                    { Name: "yoshida", Math: 94, English: 26}];
     deepEqual(actual, expected);
 
     actual = Enumerable.from(math)
@@ -53,7 +50,7 @@ test("groupJoin", function ()
 {
     var array1 = [3, 3, 4, 5, 6];
     var array2 = [2, 4, 5, 6, 6];
-    actual = Enumerable.from(array1)
+    let actual = Enumerable.from(array1)
         .groupJoin(array2, " i => i", " i => i",
             function (outer, collection)
             {
@@ -63,11 +60,11 @@ test("groupJoin", function ()
                 }
             })
         .toArray();
-    expected = [{ outer: 3, collection: [] },
-        { outer: 3, collection: [] },
-        { outer: 4, collection: [4] },
-        { outer: 5, collection: [5] },
-        { outer: 6, collection: [6, 6]}];
+    let expected = [{ outer: 3, collection: [] },
+                    { outer: 3, collection: [] },
+                    { outer: 4, collection: [4] },
+                    { outer: 5, collection: [5] },
+                    { outer: 6, collection: [6, 6]}];
     deepEqual(actual, expected);
 
     actual = Enumerable.from(array1)

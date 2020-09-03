@@ -1,13 +1,10 @@
-var module = QUnit.module;
-var Enumerable = require('../linq');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
+var {test, testModule, deepEqual} = require('./testutils.js')
+var Enumerable = require('../linq.min');
 
-module("Iterator");
-
-var actual, expected;
+testModule("Iterator");
 
 test("for..of", function () {
-    actual = [];
+    let actual = [];
     for (var a of Enumerable.from([1, 2, 3])) {
         actual.push(a);
     }
@@ -16,7 +13,7 @@ test("for..of", function () {
 
 test("Symbol.iterator", function ()
 {
-    actual = [1,2,3,4];
+    let actual = [1,2,3,4];
     expected = Array.from(Enumerable.from(actual));
     deepEqual(actual, expected);
     var actual2 = actual.map(function(x) { return x * 2 }); // [2,4,6,8];
@@ -32,7 +29,7 @@ test("from Iterable", function () {
 
     deepEqual(Enumerable.from(words()).toArray(), ["abc", "def"]);
 
-    actual = [];
+    let actual = [];
     for (var a of Enumerable.from(words())) {
         actual.push(a);
     }

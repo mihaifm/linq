@@ -1,10 +1,7 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, ok, strictEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Set");
-
-var expected, actual; // will be removed
+testModule("Set");
 
 test("all", function () {
     var seq = Enumerable.range(1, 10);
@@ -24,50 +21,55 @@ test("any", function () {
 test("isEmpty", function () {
     var _ = Enumerable.range(1, 10).isEmpty();
 
-    _.is(false);
-    Enumerable.empty().isEmpty().is(true);
+    strictEqual(_, false);
+    strictEqual(Enumerable.empty().isEmpty(), true);
 
-    [].isEmpty().is(true);
+    Enumerable.Utils.extendTo(Array);
+    strictEqual([].isEmpty(), true);
+    Enumerable.Utils.recallFrom(Array);
 });
 
 test("concat", function () {
-    actual = Enumerable.range(1, 3).concat([20, 21, 22]).toArray();
+    let actual = Enumerable.range(1, 3).concat([20, 21, 22]).toArray();
     deepEqual(actual, [1, 2, 3, 20, 21, 22]);
 
 
-    Enumerable.range(1, 3).concat([]).is(1, 2, 3);
-    Enumerable.range(1, 3).concat([2, 3], [4, 5]).is(1, 2, 3, 2, 3, 4, 5);
+    deepEqual(Enumerable.range(1, 3).concat([]).toArray(), [1, 2, 3]);
+    deepEqual(Enumerable.range(1, 3).concat([2, 3], [4, 5]).toArray(), [1, 2, 3, 2, 3, 4, 5]);
     var range = Enumerable.rangeTo(3, 5);
-    range.concat(range, range, range, range).is(Enumerable.repeat(range, 5).selectMany());
+    deepEqual(range.concat(range, range, range, range).toArray(), Enumerable.repeat(range, 5).selectMany().toArray());
 });
 
 test("insert", function () {
-    actual = Enumerable.range(1, 5).insert(3, [20, 21, 22]).toArray();
+    let actual = Enumerable.range(1, 5).insert(3, [20, 21, 22]).toArray();
     deepEqual(actual, [1, 2, 3, 20, 21, 22, 4, 5]);
 });
 
 test("alternate", function () {
+    Enumerable.Utils.extendTo(Array);
+
     // single value
-    Enumerable.empty().alternate(-1).is([]);
-    [1].alternate(-1).is(1);
-    [1, 2].alternate(-1).is(1, -1, 2);
-    Enumerable.range(1, 5).alternate(-1).is(1, -1, 2, -1, 3, -1, 4, -1, 5);
-    Enumerable.range(1, 6).alternate(-1).is(1, -1, 2, -1, 3, -1, 4, -1, 5, -1, 6);
+    deepEqual(Enumerable.empty().alternate(-1).toArray(), []);
+
+    deepEqual([1].alternate(-1).toArray(), [1]);
+    deepEqual([1, 2].alternate(-1).toArray(), [1, -1, 2]);
+    deepEqual(Enumerable.range(1, 5).alternate(-1).toArray(), [1, -1, 2, -1, 3, -1, 4, -1, 5]);
+    deepEqual(Enumerable.range(1, 6).alternate(-1).toArray(), [1, -1, 2, -1, 3, -1, 4, -1, 5, -1, 6]);
 
     // multiple, array
-    Enumerable.empty().alternate([-1, -2]).is([]);
-    [1].alternate([-1, -2]).is(1);
-    [1, 2].alternate([-1, -2]).is(1, -1, -2, 2);
-    Enumerable.range(1, 5).alternate([-1, -2]).is(1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5);
-    Enumerable.range(1, 6).alternate([-1, -2]).is(1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5, -1, -2, 6);
+    deepEqual(Enumerable.empty().alternate([-1, -2]).toArray(), []);
+    deepEqual([1].alternate([-1, -2]).toArray(), [1]);
+    deepEqual([1, 2].alternate([-1, -2]).toArray(), [1, -1, -2, 2]);
+    deepEqual(Enumerable.range(1, 5).alternate([-1, -2]).toArray(), [1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5]);
+    deepEqual(Enumerable.range(1, 6).alternate([-1, -2]).toArray(), [1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5, -1, -2, 6]);
 
     // multiple, enumerable
     var seq = Enumerable.rangeTo(-1, -2);
-    Enumerable.empty().alternate(seq).is([]);
-    [1].alternate(seq).is(1);
-    [1, 2].alternate(seq).is(1, -1, -2, 2);
-    Enumerable.range(1, 5).alternate(seq).is(1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5);
-    Enumerable.range(1, 6).alternate(seq).is(1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5, -1, -2, 6);
+    deepEqual(Enumerable.empty().alternate(seq).toArray(), []);
+    deepEqual([1].alternate(seq).toArray(), [1]);
+    deepEqual([1, 2].alternate(seq).toArray(), [1, -1, -2, 2]);
+    deepEqual(Enumerable.range(1, 5).alternate(seq).toArray(), [1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5]);
+    deepEqual(Enumerable.range(1, 6).alternate(seq).toArray(), [1, -1, -2, 2, -1, -2, 3, -1, -2, 4, -1, -2, 5, -1, -2, 6]);
 });
 
 test("contains", function () {
@@ -81,33 +83,37 @@ test("contains", function () {
 });
 
 test("defaultIfEmpty", function () {
-    actual = Enumerable.range(1, 10).defaultIfEmpty(199).toArray();
+    let actual = Enumerable.range(1, 10).defaultIfEmpty(199).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     actual = Enumerable.empty().defaultIfEmpty(199).toArray();
     deepEqual(actual, [199]);
 });
 
 test("distinct", function () {
-    actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9]).distinct().toArray();
+    let actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9]).distinct().toArray();
     deepEqual(actual, [1, 3, 5, 6, 4, 2, 9]);
     actual = Enumerable.range(1, 10).select("{test:$%2}").distinct("$.test").toArray();
     deepEqual(actual, [{ test: 1 }, { test: 0 }]);
 });
 
 test("distinctUntilChanged", function () {
-    [9, 1, 3, 5, 7, 7, 7, 3, 4, 2, 2, 9].distinctUntilChanged().is(9, 1, 3, 5, 7, 3, 4, 2, 9);
-    [1, 3, 3, 3, 1, 2, 6, 3, 5, 1]
-        .select("{test:$}")
-        .distinctUntilChanged("$.test")
-        .is({ test: 1 }, { test: 3 }, { test: 1 }, { test: 2 }, { test: 6 }, { test: 3 }, { test: 5 }, { test: 1 });
+    Enumerable.Utils.extendTo(Array);
 
-    [1].distinctUntilChanged().is(1);
-    [1, 1].distinctUntilChanged().is(1);
-    [1, 2].distinctUntilChanged().is(1, 2);
+    deepEqual([9, 1, 3, 5, 7, 7, 7, 3, 4, 2, 2, 9].distinctUntilChanged().toArray(), [9, 1, 3, 5, 7, 3, 4, 2, 9]);
+    deepEqual([1, 3, 3, 3, 1, 2, 6, 3, 5, 1]
+        .select("{test:$}")
+        .distinctUntilChanged("$.test").toArray(),
+        [{ test: 1 }, { test: 3 }, { test: 1 }, { test: 2 }, { test: 6 }, { test: 3 }, { test: 5 }, { test: 1 }]);
+
+    deepEqual([1].distinctUntilChanged().toArray(), [1]);
+    deepEqual([1, 1].distinctUntilChanged().toArray(), [1]);
+    deepEqual([1, 2].distinctUntilChanged().toArray(), [1, 2]);
+
+    Enumerable.Utils.recallFrom(Array);
 });
 
 test("except", function () {
-    actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
+    let actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
         .except([4, 6, 2, 7, 8, 10, 11])
         .toArray();
     deepEqual(actual, [1, 3, 5, 9]);
@@ -118,7 +124,7 @@ test("except", function () {
 });
 
 test("intersect", function () {
-    actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
+    let actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
         .intersect([4, 6, 2, 7, 8, 10, 11])
         .toArray();
     deepEqual(actual, [6, 4, 2]);
@@ -142,7 +148,7 @@ test("sequenceEqual", function () {
 });
 
 test("union", function () {
-    actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
+    let actual = Enumerable.from([1, 3, 5, 6, 6, 3, 4, 3, 2, 9])
         .union([4, 6, 2, 7, 8, 10, 11])
         .toArray();
     deepEqual(actual, [1, 3, 5, 6, 4, 2, 9, 7, 8, 10, 11]);

@@ -1,8 +1,7 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, notDeepEqual, ok, strictEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Ordering");
+testModule("Ordering");
 
 var expected, actual;
 
@@ -29,7 +28,7 @@ test("orderBy", function () {
         .toArray();
     deepEqual(actual, [1, 7, 31, 51, 51, 85, 99, 823]);
 
-    Enumerable.rangeTo(10, 1).orderBy("$%5").is(10, 5, 6, 1, 7, 2, 8, 3, 9, 4);
+    deepEqual(Enumerable.rangeTo(10, 1).orderBy("$%5").toArray(), [10, 5, 6, 1, 7, 2, 8, 3, 9, 4]);
 
     actual = ['b', 'a', 'd', 'c'];
     deepEqual(Enumerable.from(actual).orderBy().toArray(), ['a', 'b', 'c', 'd']);
@@ -44,7 +43,7 @@ test("orderByDescending", function () {
         .toArray();
     deepEqual(actual, [823, 99, 85, 51, 51, 31, 7, 1]);
 
-    Enumerable.rangeTo(1, 10).orderByDescending("$%5").is(4, 9, 3, 8, 2, 7, 1, 6, 5, 10);
+    deepEqual(Enumerable.rangeTo(1, 10).orderByDescending("$%5").toArray(), [4, 9, 3, 8, 2, 7, 1, 6, 5, 10]);
 
     actual = ['b', 'a', 'd', 'c'];
     deepEqual(Enumerable.from(actual)
@@ -130,27 +129,27 @@ test("reverse", function () {
 test("shuffle", function () {
     var array = [1, 51, 7, 823, 85, 31, 51, 99];
     var shuffled = Enumerable.from(array).shuffle().toArray();
-    notDeepEqual(shuffled, array, "random test. if failed retry");
+    notDeepEqual(shuffled, array);
 });
 
 test("weightedSample", function () {
-    var result = [1, 25, 35, 39].weightedSample()
+    var result = Enumerable.from([1, 25, 35, 39]).weightedSample()
         .take(10000)
         .groupBy()
         .toObject("$.key()", "$.count()");
 
-    result[1].is(function (x) { return 0 < x && x < 200 });
-    result[25].is(function (x) { return 2300 < x && x < 2700 });
-    result[35].is(function (x) { return 3300 < x && x < 3700 });
-    result[39].is(function (x) { return 3700 < x && x < 4100 });
+    ok((function (x) { return 0 < x && x < 200 })(result[1]));
+    ok((function (x) { return 2300 < x && x < 2700 })(result[25]));
+    ok((function (x) { return 3300 < x && x < 3700 })(result[35]));
+    ok((function (x) { return 3700 < x && x < 4100 })(result[39]));
 
-    Enumerable.from(result).sum(function (x) { return x.value }).is(10000);
+    strictEqual(Enumerable.from(result).sum(function (x) { return x.value }), 10000);
 
-    result = [1, 99].weightedSample().take(10000).groupBy().toObject("$.key()", "$.count()");
-    result[1].is(function (x) { return 0 < x && x < 200 });
-    result[99].is(function (x) { return 9800 < x && x < 10000 });
+    result = Enumerable.from([1, 99]).weightedSample().take(10000).groupBy().toObject("$.key()", "$.count()");
+    ok((function (x) { return 0 < x && x < 200 })(result[1]));
+    ok((function (x) { return 9800 < x && x < 10000 })(result[99]));
 
-    result = [0, 1].weightedSample().take(10000).groupBy().toObject("$.key()", "$.count()");
-    (result[0] === undefined).is(true);
-    result[1].is(10000);
+    result = Enumerable.from([0, 1]).weightedSample().take(10000).groupBy().toObject("$.key()", "$.count()");
+    ok(result[0] === undefined);
+    strictEqual(result[1], 10000);
 });

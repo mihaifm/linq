@@ -1,89 +1,23 @@
-var tr = require("qunit");
+var testutils = require('./testutils')
 
-var callback = function(err, report) {
-    console.dir(report);
-}
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/linq.qunit-test.js"
-}, callback);
+require('./action')
+require('./aggregate')
+require('./arrayEnumerable')
+require('./convert')
+require('./dictionary')
+require('./enumerable')
+require('./errorHandling')
+require('./functional')
+require('./grouping')
+require('./iterator')
+require('./join')
+require('./ordering')
+require('./paging')
+require('./projection')
+require('./set')
+require('./whereSelectEnumerable')
 
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/action.js"
-}, callback);
+testutils.runAll(false);
 
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/aggregate.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/arrayEnumerable.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/convert.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/dictionary.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/enumerable.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/errorHandling.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/functional.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/grouping.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/join.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/ordering.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/paging.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/projection.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/set.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/whereSelectEnumerable.js"
-}, callback);
-
-tr.run({
-    code: "./linq.min.js",
-    tests: "./test/iterator.js"
-}, callback);
+if (testutils.getFailedTests().length > 0)
+    console.log(testutils.getFailedTests());

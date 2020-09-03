@@ -1,15 +1,12 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, equal} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("ErrorHandling");
-
-var expected, actual; // will be removed
+testModule("ErrorHandling");
 
 test("catchError", function ()
 {
     var msg;
-    actual = Enumerable.range(1, 10)
+    let actual = Enumerable.range(1, 10)
         .select(function (i)
         {
             if (i == 5) throw new Error("aiueo");
@@ -27,7 +24,7 @@ test("catchError", function ()
 test("finallyAction", function ()
 {
     var msg;
-    actual = Enumerable.range(1, 10)
+    let actual = Enumerable.range(1, 10)
         .select(function (i)
         {
             if (i == 5) throw new Error("aiueo");

@@ -1,18 +1,15 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual, strictEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Paging");
-
-var expected, actual; // will be removed
+testModule("Paging");
 
 test("elementAt", function () {
-    actual = Enumerable.range(1, 10).elementAt(5);
+    let actual = Enumerable.range(1, 10).elementAt(5);
     strictEqual(actual, 6);
 });
 
 test("elementAtOrDefault", function () {
-    actual = Enumerable.range(1, 10).elementAtOrDefault(3, 0);
+    let actual = Enumerable.range(1, 10).elementAtOrDefault(3, 0);
     strictEqual(actual, 4);
     actual = Enumerable.range(1, 10).elementAtOrDefault(31, 0);
     strictEqual(actual, 0);
@@ -24,7 +21,7 @@ test("elementAtOrDefault", function () {
 });
 
 test("first", function () {
-    actual = Enumerable.range(1, 10).first();
+    let actual = Enumerable.range(1, 10).first();
     strictEqual(actual, 1);
     actual = Enumerable.range(1, 10).first("i=>i*3==6");
     strictEqual(actual, 2);
@@ -62,7 +59,7 @@ test("firstOrDefault", function () {
 });
 
 test("last", function () {
-    actual = Enumerable.range(1, 10).last();
+    let actual = Enumerable.range(1, 10).last();
     strictEqual(actual, 10);
 
     actual = Enumerable.range(1, 10).last("i=>i<6");
@@ -101,7 +98,7 @@ test("lastOrDefault", function () {
 });
 
 test("single", function () {
-    actual = Enumerable.range(1, 1).single();
+    let actual = Enumerable.range(1, 1).single();
     strictEqual(actual, 1);
 
     actual = Enumerable.range(1, 10).single("i=>i==6");
@@ -109,7 +106,7 @@ test("single", function () {
 });
 
 test("singleOrDefault", function () {
-    actual = Enumerable.range(1, 1).singleOrDefault(null, 0);
+    let actual = Enumerable.range(1, 1).singleOrDefault(null, 0);
     strictEqual(actual, 1);
     actual = Enumerable.range(1, 10).skip(11).singleOrDefault(null, 0);
     strictEqual(actual, 0);
@@ -124,19 +121,19 @@ test("singleOrDefault", function () {
     actual = Enumerable.range(1, 10).singleOrDefault("i=>i>13", 40);
     strictEqual(actual, 40);
 
-    Enumerable.range(1, 1).singleOrDefault().is(1);
-    Enumerable.range(1, 10).singleOrDefault("i=>i*3==6").is(2);
-    (Enumerable.range(1, 10).singleOrDefault("i=>i>13") === null).isTrue();
-    (Enumerable.empty().singleOrDefault() === null).isTrue();
+    strictEqual(Enumerable.range(1, 1).singleOrDefault(), 1);
+    strictEqual(Enumerable.range(1, 10).singleOrDefault("i=>i*3==6"), 2);
+    strictEqual(Enumerable.range(1, 10).singleOrDefault("i=>i>13"), null);
+    strictEqual(Enumerable.empty().singleOrDefault(), null);
 });
 
 test("skip", function () {
-    actual = Enumerable.range(1, 10).skip(4).toArray();
+    let actual = Enumerable.range(1, 10).skip(4).toArray();
     deepEqual(actual, [5, 6, 7, 8, 9, 10]);
 });
 
 test("skipWhile", function () {
-    actual = Enumerable.range(1, 10).skipWhile("i=>i<8").toArray();
+    let actual = Enumerable.range(1, 10).skipWhile("i=>i<8").toArray();
     deepEqual(actual, [8, 9, 10]);
 
     actual = Enumerable.range(1, 10).skipWhile("v,i=>i<8").toArray();
@@ -144,12 +141,12 @@ test("skipWhile", function () {
 });
 
 test("take", function () {
-    actual = Enumerable.range(1, 10).take(4).toArray();
+    let actual = Enumerable.range(1, 10).take(4).toArray();
     deepEqual(actual, [1, 2, 3, 4]);
 });
 
 test("takeWhile", function () {
-    actual = Enumerable.range(1, 10).takeWhile("i=>i<8").toArray();
+    let actual = Enumerable.range(1, 10).takeWhile("i=>i<8").toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7]);
 
     actual = Enumerable.range(1, 10).takeWhile("v,i=>i<8").toArray();
@@ -157,7 +154,7 @@ test("takeWhile", function () {
 });
 
 test("takeExceptLast", function () {
-    actual = Enumerable.range(1, 10).takeExceptLast().toArray();
+    let actual = Enumerable.range(1, 10).takeExceptLast().toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9]);
     actual = Enumerable.range(1, 10).takeExceptLast(3).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7]);
@@ -168,7 +165,7 @@ test("takeExceptLast", function () {
 });
 
 test("takeFromLast", function () {
-    actual = Enumerable.range(1, 10).takeFromLast(3).toArray();
+    let actual = Enumerable.range(1, 10).takeFromLast(3).toArray();
     deepEqual(actual, [8, 9, 10]);
     actual = Enumerable.range(1, 10).takeFromLast(100).toArray();
     deepEqual(actual, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
@@ -179,19 +176,27 @@ test("takeFromLast", function () {
 });
 
 test("indexOf", function () {
-    actual = Enumerable.range(1, 10).indexOf(3);
+    let actual = Enumerable.range(1, 10).indexOf(3);
     strictEqual(actual, 2);
 
-    [1, 10, 100, 1000, 100, 100].asEnumerable().indexOf(100).is(2);
+    Enumerable.Utils.extendTo(Array);
 
-    [1, 2, 3, 3, 3, 4, 5].asEnumerable().indexOf(3).is(2);
-    [1, 2, 3, 3, 3, 4, 5].asEnumerable().indexOf(function (x) { return x == 3; }).is(2);
+    strictEqual([1, 10, 100, 1000, 100, 100].asEnumerable().indexOf(100), 2);
+
+    strictEqual([1, 2, 3, 3, 3, 4, 5].asEnumerable().indexOf(3), 2);
+    strictEqual([1, 2, 3, 3, 3, 4, 5].asEnumerable().indexOf(function (x) { return x == 3; }), 2);
+
+    Enumerable.Utils.recallFrom(Array);
 });
 
 test("lastIndexOf", function () {
-    actual = Enumerable.from([1, 2, 3, 2, 5]).lastIndexOf(2)
+    let actual = Enumerable.from([1, 2, 3, 2, 5]).lastIndexOf(2)
     strictEqual(actual, 3);
 
-    [1, 2, 3, 3, 3, 4, 5].asEnumerable().lastIndexOf(3).is(4);
-    [1, 2, 3, 3, 3, 4, 5].asEnumerable().lastIndexOf(function (x) { return x == 3; }).is(4);
+    Enumerable.Utils.extendTo(Array);
+
+    strictEqual([1, 2, 3, 3, 3, 4, 5].asEnumerable().lastIndexOf(3), 4);
+    strictEqual([1, 2, 3, 3, 3, 4, 5].asEnumerable().lastIndexOf(function (x) { return x == 3; }), 4);
+
+    Enumerable.Utils.recallFrom(Array);
 });

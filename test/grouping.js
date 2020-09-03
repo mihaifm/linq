@@ -1,20 +1,17 @@
-﻿var module = QUnit.module;
+﻿var {test, testModule, deepEqual} = require('./testutils.js')
 var Enumerable = require('../linq.min');
-require("../extensions/linq.qunit.js")({'Enumerable': Enumerable});
 
-module("Grouping");
-
-var expected, actual; // will be removed
+testModule("Grouping");
 
 var fileList = ["temp.xls", "temp2.xls", "temp.pdf", "temp.jpg", "temp2.pdf", "temp3.xls"];
 
 test("groupBy", function ()
 {
-    actual = Enumerable.from(fileList)
+    let actual = Enumerable.from(fileList)
         .groupBy("file=>file.match(/\\.(.+$)/)[1]")
         .select("{key:$.key(),value:$.toArray()}")
         .toArray();
-    expected = [{ key: "xls", value: ["temp.xls", "temp2.xls", "temp3.xls"] },
+    let expected = [{ key: "xls", value: ["temp.xls", "temp2.xls", "temp3.xls"] },
                 { key: "pdf", value: ["temp.pdf", "temp2.pdf"] },
                 { key: "jpg", value: ["temp.jpg"]}];
     deepEqual(actual, expected);
@@ -42,7 +39,7 @@ test("groupBy", function ()
         { Date: new Date(2010, 5, 5), Id: 2 },
         { Date: new Date(2000, 1, 1), Id: 3 }
     ]
-    var actual = Enumerable.from(objects)
+    actual = Enumerable.from(objects)
         .groupBy("$.Date", "$.Id",
             function (key, group) { return key.getFullYear() + "-" + group.toJoinedString(',') },
             function (key) { return key.toString() })
@@ -53,11 +50,11 @@ test("groupBy", function ()
 
 test("partitionBy", function ()
 {
-    actual = Enumerable.from(fileList)
+    let actual = Enumerable.from(fileList)
         .partitionBy("file=>file.match(/\\.(.+$)/)[1]")
         .select("{key:$.key(),value:$.toArray()}")
         .toArray();
-    expected = [{ key: "xls", value: ["temp.xls", "temp2.xls"] },
+    let expected = [{ key: "xls", value: ["temp.xls", "temp2.xls"] },
                 { key: "pdf", value: ["temp.pdf"] },
                 { key: "jpg", value: ["temp.jpg"] },
                 { key: "pdf", value: ["temp2.pdf"] },
@@ -98,7 +95,7 @@ test("partitionBy", function ()
         { Date: new Date(2010, 5, 5), Id: 5 },
         { Date: new Date(2010, 5, 5), Id: 6 }
     ]
-    var actual = Enumerable.from(objects)
+    actual = Enumerable.from(objects)
         .partitionBy("$.Date", "$.Id",
             function (key, group) { return key.getFullYear() + "-" + group.toJoinedString(',') },
             function (key) { return key.toString() })
@@ -107,10 +104,9 @@ test("partitionBy", function ()
     deepEqual(actual, expected);
 });
 
-
 test("buffer", function ()
 {
-    actual = Enumerable.range(1, 10).buffer("3").toArray();
-    expected = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]];
+    let actual = Enumerable.range(1, 10).buffer("3").toArray();
+    let expected = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]];
     deepEqual(actual, expected);
 });
