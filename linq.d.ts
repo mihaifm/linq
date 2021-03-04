@@ -168,7 +168,7 @@ declare namespace Enumerable {
     toLookup<TKey, TElement, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, compareSelector: (key: TKey) => TCompare): ILookup<TKey, TElement>;
     toObject(keySelector: (element: T) => any, elementSelector?: (element: T) => any): Object;
     // :IDictionary<TKey, T>
-    toDictionary<TKey>(keySelector: (element: T) => TKey): IDictionary<TKey, any>;
+    toDictionary<TKey>(keySelector: (element: T) => TKey): IDictionary<TKey, T>;
     toDictionary<TKey, TValue>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TValue): IDictionary<TKey, TValue>;
     toDictionary<TKey, TValue, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TValue, compareSelector: (key: TKey) => TCompare): IDictionary<TKey, TValue>;
     toJSONString(replacer: (key: string, value: any) => any): string;
