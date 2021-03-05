@@ -72,9 +72,9 @@ declare namespace Enumerable {
     all(predicate: (element: T) => boolean): boolean;
     any(predicate?: (element: T) => boolean): boolean;
     isEmpty(): boolean;
+    concat(...sequences: T[][]): IEnumerable<T>;
     concat(...sequences: IEnumerable<T>[]): IEnumerable<T>;
     concat(...sequences: { length: number;[x: number]: T; }[]): IEnumerable<T>;
-    concat(...sequences: T[]): IEnumerable<T>;
     insert(index: number, second: IEnumerable<T>): IEnumerable<T>;
     insert(index: number, second: { length: number;[x: number]: T; }): IEnumerable<T>;
     alternate(alternateValue: T): IEnumerable<T>;
