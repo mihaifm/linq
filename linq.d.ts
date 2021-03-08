@@ -60,9 +60,7 @@ declare namespace Enumerable {
     zip<U, TResult>(second: { length: number;[x: number]: U; }, resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
     zip<U, TResult>(second: U[], resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
     zip<TResult>(...params: any[]): IEnumerable<TResult>; // last one is selector
-    merge<TResult>(...params: IEnumerable<T>[]): IEnumerable<T>;
-    merge<TResult>(...params: { length: number;[x: number]: T; }[]): IEnumerable<T>;
-    merge<TResult>(...params: T[][]): IEnumerable<T>;
+    merge(...params: (T[]|IEnumerable<T>|{ length: number;[x: number]: T; })[]): IEnumerable<T>;
     join<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
     join<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
     join<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
@@ -72,9 +70,7 @@ declare namespace Enumerable {
     all(predicate: (element: T) => boolean): boolean;
     any(predicate?: (element: T) => boolean): boolean;
     isEmpty(): boolean;
-    concat(...sequences: IEnumerable<T>[]): IEnumerable<T>;
-    concat(...sequences: { length: number;[x: number]: T; }[]): IEnumerable<T>;
-    concat(...sequences: T[]): IEnumerable<T>;
+    concat(...sequences: (T[]|IEnumerable<T>|{ length: number;[x: number]: T; })[]): IEnumerable<T>;
     insert(index: number, second: IEnumerable<T>): IEnumerable<T>;
     insert(index: number, second: { length: number;[x: number]: T; }): IEnumerable<T>;
     alternate(alternateValue: T): IEnumerable<T>;
