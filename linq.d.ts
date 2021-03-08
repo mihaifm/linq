@@ -18,6 +18,7 @@ declare namespace Enumerable {
   export function from(obj: string): IEnumerable<string>;
   export function from<T>(obj: T[]): IEnumerable<T>;
   export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>;
+  export function from<T>(obj: { [key: string]: T }): IEnumerable<{ key: string; value: T }>;
   export function from(obj: any): IEnumerable<{ key: string; value: any }>;
   export function make<T>(element: T): IEnumerable<T>;
   export function matches<T>(input: string, pattern: RegExp): IEnumerable<T>;
