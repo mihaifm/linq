@@ -37,6 +37,7 @@ declare namespace Enumerable {
   export interface IEnumerable<T> {
     constructor(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     getEnumerator(): IEnumerator<T>;
+    [Symbol.iterator](): Iterator<T>;
 
     // Extension Methods
     traverseBreadthFirst(childrenSelector: (element: T) => IEnumerable<T>): IEnumerable<T>;
