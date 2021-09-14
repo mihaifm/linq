@@ -1,5 +1,5 @@
-﻿var {test, testModule, deepEqual, strictEqual} = require('./testutils.js')
-var Enumerable = require('../linq.min');
+﻿import { test, testModule, deepEqual, strictEqual } from './testutils.js'
+import Enumerable from '../linq.js'
 
 testModule("Paging");
 

@@ -1,5 +1,5 @@
-var {test, testModule, deepEqual} = require('./testutils.js')
-var Enumerable = require('../linq.min');
+import { test, testModule, deepEqual } from './testutils.js'
+import Enumerable from '../linq.js'
 
 testModule("Iterator");
 
@@ -14,9 +14,9 @@ test("for..of", function () {
 test("Symbol.iterator", function ()
 {
     let actual = [1,2,3,4];
-    expected = Array.from(Enumerable.from(actual));
+    let expected = Array.from(Enumerable.from(actual));
     deepEqual(actual, expected);
-    var actual2 = actual.map(function(x) { return x * 2 }); // [2,4,6,8];
+    let actual2 = actual.map(function(x) { return x * 2 }); // [2,4,6,8];
     expected = Enumerable.from(actual).select(function(x) { return x * 2 });
     deepEqual(actual2, Array.from(expected));
 });

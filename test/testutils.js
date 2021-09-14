@@ -1,5 +1,3 @@
-const assert = require('assert').strict;
-
 var tests = []
 var failedTests = []
 var currentModule = "";
@@ -19,32 +17,46 @@ function testModule(name) {
     currentModule = name;
 }
 
+function deepCmp(x, y) {
+    const kx = Object.keys(x);
+    const ky = Object.keys(y);
+
+    if (kx.length !== ky.length)
+        return false;
+
+    for (const key of kx) {
+        const vx = x[key];
+        const vy = y[key];
+        const areObjects = vx != null && typeof vx === 'object' && vy != null && typeof vy === 'object';
+
+        if (areObjects && !deepCmp(vx, vy))
+            return false;
+
+        if (!areObjects && vx !== vy)
+            return false;
+    }
+
+    return true;
+}
+
 function deepEqual(x, y) {
     numAssertions++
     assertionIndex++
 
-    try {
-        assert.deepEqual(x, y);
-    }
-    catch(e) {
-        throw `[deepEqual] Assertion ${assertionIndex} failed`;
-    }
+    if (deepCmp(x, y))
+        return true;
 
-    return true;
+    throw `[deepEqual] Assertion ${assertionIndex} failed`;
 }
 
 function notDeepEqual(x, y) {
     numAssertions++
     assertionIndex++
 
-    try {
-        assert.deepEqual(x, y);
-    }
-    catch(e) {
-        return true;
-    }
+    if (deepCmp(x, y))
+        throw `[deepEqual] Assertion ${assertionIndex} failed`;
 
-    throw `[deepEqual] Assertion ${assertionIndex} failed`;
+    return true;
 }
 
 function strictEqual(x, y) {
@@ -122,4 +134,4 @@ function getFailedTests() {
     return failedTests;
 }
 
-module.exports = { init, test, testModule, getFailedTests, runAll, deepEqual, notDeepEqual, strictEqual, strictNotEqual, equal, notEqual, ok }
+export { init, test, testModule, getFailedTests, runAll, deepEqual, notDeepEqual, strictEqual, strictNotEqual, equal, notEqual, ok }

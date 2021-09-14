@@ -1,21 +1,21 @@
-var testutils = require('./testutils')
+import * as testutils from './testutils.js'
 
-require('./action')
-require('./aggregate')
-require('./arrayEnumerable')
-require('./convert')
-require('./dictionary')
-require('./enumerable')
-require('./errorHandling')
-require('./functional')
-require('./grouping')
-require('./iterator')
-require('./join')
-require('./ordering')
-require('./paging')
-require('./projection')
-require('./set')
-require('./whereSelectEnumerable')
+import './action.js'
+import './aggregate.js'
+import './arrayEnumerable.js'
+import './convert.js'
+import './dictionary.js'
+import './enumerable.js'
+import './errorHandling.js'
+import './functional.js'
+import './grouping.js'
+import './iterator.js'
+import './join.js'
+import './ordering.js'
+import './paging.js'
+import './projection.js'
+import './set.js'
+import './whereSelectEnumerable.js'
 
 testutils.runAll(false);
 

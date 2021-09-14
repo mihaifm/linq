@@ -1,5 +1,5 @@
-﻿var {test, testModule, deepEqual} = require('./testutils.js')
-var Enumerable = require('../linq.min');
+﻿import { test, testModule, deepEqual } from './testutils.js'
+import Enumerable from '../linq.js'
 
 testModule("Projection");
 
@@ -53,7 +53,7 @@ test("selectMany", function () {
     // actual = Enumerable.range(1, 5).selectMany("i,index=>this.repeat(i,index+1)", "i=>i*10").toArray();
     // deepEqual(actual, [10, 20, 20, 30, 30, 30, 40, 40, 40, 40, 50, 50, 50, 50, 50]);
 
-    actual = Enumerable.range(1, 5)
+    let actual = Enumerable.range(1, 5)
                        .selectMany(function(i) { return Enumerable.repeat(i, 2); })
                        .toArray();
     deepEqual(actual, [1, 1, 2, 2, 3, 3, 4, 4, 5, 5]);
