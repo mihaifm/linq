@@ -240,5 +240,4 @@ declare namespace Enumerable {
   }
 }
 
-export = Enumerable;
-export as namespace Enumerable;
+export default Enumerable;
