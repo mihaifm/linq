@@ -1,17 +1,19 @@
 declare namespace Enumerable {
-  export var Utils: {
-    createLambda(expression: any): (...params: any[]) => any;
+  export let Utils: {
+    createLambda(expression: null): (x: unknown) => unknown;
+    createLambda(expression: string): ((...params: unknown[]) => unknown);
+    createLambda<T>(expression?: T): T;
     createEnumerable<T>(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
     createEnumerator<T>(initialize: () => void, tryGetNext: () => boolean, dispose: () => void): IEnumerator<T>;
-    extendTo(type: any): void;
-    recallFrom(type: any): void;
+    extendTo(type: unknown): void;
+    recallFrom(type: unknown): void;
     hasNativeIteratorSupport(): boolean;
-  };
+  }
+
   export function choice<T>(...params: T[]): IEnumerable<T>;
   export function cycle<T>(...params: T[]): IEnumerable<T>;
   export function empty<T>(): IEnumerable<T>;
-  // from<T>, obj as JScript's IEnumerable or WinMD IIterable<T> is IEnumerable<T> but it can't define.
-  export function from(): IEnumerable<any>; // empty
+  export function from(): IEnumerable<unknown>;
   export function from<T>(obj: IEnumerable<T>): IEnumerable<T>;
   export function from(obj: number): IEnumerable<number>;
   export function from(obj: boolean): IEnumerable<boolean>;
@@ -20,7 +22,7 @@ declare namespace Enumerable {
   export function from<T>(obj: Iterator<T>): IEnumerable<T>;
   export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>;
   export function from<T>(obj: { [key: string]: T }): IEnumerable<{ key: string; value: T }>;
-  export function from(obj: any): IEnumerable<{ key: string; value: any }>;
+  export function from<T>(obj: Record<PropertyKey, T>): IEnumerable<{ key: string; value: T }>;
   export function make<T>(element: T): IEnumerable<T>;
   export function matches<T>(input: string, pattern: RegExp): IEnumerable<T>;
   export function matches<T>(input: string, pattern: string, flags?: string): IEnumerable<T>;
@@ -36,16 +38,15 @@ declare namespace Enumerable {
   export function defer<T>(enumerableFactory: () => IEnumerable<T>): IEnumerable<T>;
 
   export interface IEnumerable<T> {
-    constructor(getEnumerator: () => IEnumerator<T>): IEnumerable<T>;
+    (getEnumerator: () => IEnumerator<T>): void;
     getEnumerator(): IEnumerator<T>;
     [Symbol.iterator](): Iterator<T>;
 
     // Extension Methods
     traverseBreadthFirst(childrenSelector: (element: T) => IEnumerable<T>): IEnumerable<T>;
     traverseBreadthFirst<TResult>(childrenSelector: (element: T) => IEnumerable<T>, resultSelector: (element: T, nestLevel: number) => TResult): IEnumerable<TResult>;
-    traverseDepthFirst<TResult>(childrenSelector: (element: T) => IEnumerable<T>): IEnumerable<T>;
     traverseDepthFirst<TResult>(childrenSelector: (element: T) => IEnumerable<T>, resultSelector?: (element: T, nestLevel: number) => TResult): IEnumerable<TResult>;
-    flatten(): IEnumerable<any>;
+    flatten(): IEnumerable<unknown>;
     pairwise<TResult>(selector: (prev: T, current: T) => TResult): IEnumerable<TResult>;
     scan(func: (prev: T, current: T) => T): IEnumerable<T>;
     scan<TAccumulate>(seed: TAccumulate, func: (prev: TAccumulate, current: T) => TAccumulate): IEnumerable<TAccumulate>;
@@ -58,12 +59,12 @@ declare namespace Enumerable {
     selectMany<TCollection, TResult>(collectionSelector: (element: T, index: number) => { length: number;[x: number]: TCollection; }, resultSelector: (outer: T, inner: TCollection) => TResult): IEnumerable<TResult>;
     where(predicate: (element: T, index: number) => boolean): IEnumerable<T>;
     choose(selector: (element: T, index: number) => T): IEnumerable<T>;
-    ofType<TResult>(type: any): IEnumerable<TResult>;
+    ofType<TResult>(type: unknown): IEnumerable<TResult>;
     zip<U, TResult>(second: IEnumerable<U>, resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
     zip<U, TResult>(second: { length: number;[x: number]: U; }, resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
     zip<U, TResult>(second: U[], resultSelector: (first: T, second: U, index: number) => TResult): IEnumerable<TResult>;
-    zip<TResult>(...params: any[]): IEnumerable<TResult>; // last one is selector
-    merge(...params: (T[]|IEnumerable<T>|{ length: number;[x: number]: T; })[]): IEnumerable<T>;
+    zip<TResult>(...params: unknown[]): IEnumerable<TResult>; // last one is selector
+    merge(...params: (T[] | IEnumerable<T> | { length: number;[x: number]: T; })[]): IEnumerable<T>;
     join<TInner, TKey, TResult>(inner: IEnumerable<TInner>, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
     join<TInner, TKey, TResult>(inner: { length: number;[x: number]: TInner; }, outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
     join<TInner, TKey, TResult>(inner: TInner[], outerKeySelector: (outer: T) => TKey, innerKeySelector: (inner: TInner) => TKey, resultSelector: (outer: T, inner: TInner) => TResult, compareSelector?: (obj: T) => TKey): IEnumerable<TResult>;
@@ -73,7 +74,7 @@ declare namespace Enumerable {
     all(predicate: (element: T) => boolean): boolean;
     any(predicate?: (element: T) => boolean): boolean;
     isEmpty(): boolean;
-    concat(...sequences: (T[]|IEnumerable<T>|{ length: number;[x: number]: T; })[]): IEnumerable<T>;
+    concat(...sequences: (T[] | IEnumerable<T> | { length: number;[x: number]: T; })[]): IEnumerable<T>;
     insert(index: number, second: IEnumerable<T>): IEnumerable<T>;
     insert(index: number, second: { length: number;[x: number]: T; }): IEnumerable<T>;
     alternate(alternateValue: T): IEnumerable<T>;
@@ -122,9 +123,7 @@ declare namespace Enumerable {
     groupBy<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): IEnumerable<IGrouping<TKey, TElement>>;
     groupBy<TKey, TElement, TResult>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult): IEnumerable<TResult>;
     groupBy<TKey, TElement, TResult, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult, compareSelector: (element: TKey) => TCompare): IEnumerable<TResult>;
-    // :IEnumerable<IGrouping<TKey, T>>
-    partitionBy<TKey>(keySelector: (element: T) => TKey): IEnumerable<IGrouping<TKey, any>>;
-    // :IEnumerable<IGrouping<TKey, TElement>>
+    partitionBy<TKey>(keySelector: (element: T) => TKey): IEnumerable<IGrouping<TKey, unknown>>;
     partitionBy<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): IEnumerable<IGrouping<TKey, TElement>>;
     partitionBy<TKey, TElement, TResult>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult): IEnumerable<TResult>;
     partitionBy<TKey, TElement, TResult, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, resultSelector: (key: TKey, element: IEnumerable<TElement>) => TResult, compareSelector: (element: TKey) => TCompare): IEnumerable<TResult>;
@@ -165,15 +164,12 @@ declare namespace Enumerable {
     toLookup<TKey>(keySelector: (element: T) => TKey): ILookup<TKey, T>;
     toLookup<TKey, TElement>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement): ILookup<TKey, TElement>;
     toLookup<TKey, TElement, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TElement, compareSelector: (key: TKey) => TCompare): ILookup<TKey, TElement>;
-    toObject(keySelector: (element: T) => any, elementSelector?: (element: T) => any): Object;
-    // :IDictionary<TKey, T>
+    toObject<TKey extends PropertyKey, TElement>(keySelector: (element: T) => TKey, elementSelector?: (element: T) => TElement): Record<TKey, TElement>;
     toDictionary<TKey>(keySelector: (element: T) => TKey): IDictionary<TKey, T>;
     toDictionary<TKey, TValue>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TValue): IDictionary<TKey, TValue>;
     toDictionary<TKey, TValue, TCompare>(keySelector: (element: T) => TKey, elementSelector: (element: T) => TValue, compareSelector: (key: TKey) => TCompare): IDictionary<TKey, TValue>;
-    toJSONString(replacer: (key: string, value: any) => any): string;
-    toJSONString(replacer: any[]): string;
-    toJSONString(replacer: (key: string, value: any) => any, space: any): string;
-    toJSONString(replacer: any[], space: any): string;
+    toJSONString(replacer?: (key: string, value: unknown) => unknown, space?: string | number): string;
+    toJSONString(replacer?: (string | number)[], space?: string | number): string;
     toJoinedString(separator?: string): string;
     toJoinedString<TResult>(separator: string, selector: (element: T, index: number) => TResult): string;
     doAction(action: (element: T, index: number) => void): IEnumerable<T>;
@@ -190,7 +186,7 @@ declare namespace Enumerable {
     letBind<TResult>(func: (source: IEnumerable<T>) => IEnumerable<TResult>): IEnumerable<TResult>;
     share(): IDisposableEnumerable<T>;
     memoize(): IDisposableEnumerable<T>;
-    catchError(handler: (exception: any) => void): IEnumerable<T>;
+    catchError(handler: string | ((exception: unknown) => void)): IEnumerable<T>;
     finallyAction(finallyAction: () => void): IEnumerable<T>;
     log(): IEnumerable<T>;
     log<TValue>(selector: (element: T) => TValue): IEnumerable<T>;
