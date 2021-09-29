@@ -104,15 +104,20 @@ let x: tnum = Enumerable.from([1, 2, 3]);
 
 ## Deno
 
-Install the latest version of the library with npm.
+Import the library from deno.land. Use the `@deno-types` annotation to load type definitions:
 
-Use the full file path when importing the library. Also use the `@deno-types` annotation to load type definitions:
+```ts
+// @deno-types="https://deno.land/x/linq@4.0.0/linq.d.ts"
+import Enumerable from 'https://deno.land/x/linq@4.0.0/linq.js'
+
+let radius = Enumerable.toInfinity(1).where(r => r * r * Math.PI > 10000).first()
+```
+
+You can also install locally with npm. Use the full file path when importing the library:
 
 ```ts
 // @deno-types="./node_modules/linq/linq.d.ts"
 import Enumerable from './node_modules/linq/linq.js'
-
-let radius = Enumerable.toInfinity(1).where(r => r * r * Math.PI > 10000).first()
 ```
 
 ## Browser
