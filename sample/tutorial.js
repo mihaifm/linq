@@ -1,4 +1,4 @@
-var Enumerable = require('../linq');
+import Enumerable from '../linq.js'
 
 /////////////////////////////
 // Simple Lambda Expressions
