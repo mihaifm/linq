@@ -176,10 +176,6 @@ declare namespace Enumerable {
     doAction(action: (element: T, index: number) => boolean): IEnumerable<T>;
     forEach(action: (element: T, index: number) => void): void;
     forEach(action: (element: T, index: number) => boolean): void;
-    write(separator?: string): void;
-    write<TResult>(separator: string, selector: (element: T) => TResult): void;
-    writeLine(): void;
-    writeLine<TResult>(selector: (element: T) => TResult): void;
     force(): void;
     letBind<TResult>(func: (source: IEnumerable<T>) => { length: number;[x: number]: TResult; }): IEnumerable<TResult>;
     letBind<TResult>(func: (source: IEnumerable<T>) => TResult[]): IEnumerable<TResult>;

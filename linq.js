@@ -3,14 +3,12 @@
  * licensed under MIT License
  *------------------------------------------------------------------------*/
 
-// ReadOnly Function
 var Functions = {
     Identity: function (x) { return x; },
     True: function () { return true; },
     Blank: function () { }
 };
 
-// const Type
 var Types = {
     Boolean: typeof true,
     Number: typeof 0,
@@ -20,50 +18,46 @@ var Types = {
     Function: typeof function () { }
 };
 
-// createLambda cache
 var funcCache = { "": Functions.Identity };
 
-// private utility methods
 var Utils = {
-    // Create anonymous function from lambda expression string
     createLambda: function (expression) {
         if (expression == null) return Functions.Identity;
         if (typeof expression === Types.String) {
             // get from cache
-            var f = funcCache[expression];
+            let f = funcCache[expression];
             if (f != null) {
                 return f;
             }
 
             if (expression.indexOf("=>") === -1) {
-                var regexp = new RegExp("[$]+", "g");
+                const regexp = new RegExp("[$]+", "g");
 
-                var maxLength = 0;
-                var match;
+                let maxLength = 0;
+                let match;
                 while ((match = regexp.exec(expression)) != null) {
-                    var paramNumber = match[0].length;
-                    if (paramNumber > maxLength) {
-                        maxLength = paramNumber;
+                    if (match[0].length > maxLength) {
+                        maxLength = match[0].length;
                     }
                 }
 
-                var argArray = [];
-                for (var i = 1; i <= maxLength; i++) {
-                    var dollar = "";
-                    for (var j = 0; j < i; j++) {
+                const argArray = [];
+                for (let i = 1; i <= maxLength; i++) {
+                    let dollar = "";
+                    for (let j = 0; j < i; j++) {
                         dollar += "$";
                     }
                     argArray.push(dollar);
                 }
 
-                var args = Array.prototype.join.call(argArray, ",");
+                const args = argArray.join(",");
 
                 f = new Function(args, "return " + expression);
                 funcCache[expression] = f;
                 return f;
             }
             else {
-                var expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
+                const expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
                 f = new Function(expr[1], (expr[2].match(/\breturn\b/) ? expr[2] : "return " + expr[2]));
                 funcCache[expression] = f;
                 return f;
@@ -72,36 +66,17 @@ var Utils = {
         return expression;
     },
 
-    isIEnumerable: function (obj) {
-        if (typeof Enumerator !== Types.Undefined) {
-            try {
-                new Enumerator(obj); // check JScript(IE)'s Enumerator
-                return true;
-            }
-            catch (e) { }
-        }
-
-        return false;
+    defineProperty: function (target, methodName, value) {
+        Object.defineProperty(target, methodName, {
+            enumerable: false,
+            configurable: true,
+            writable: true,
+            value: value
+        })
     },
 
-    // IE8's defineProperty is defined but cannot use, therefore check defineProperties
-    defineProperty: (Object.defineProperties != null)
-        ? function (target, methodName, value) {
-            Object.defineProperty(target, methodName, {
-                enumerable: false,
-                configurable: true,
-                writable: true,
-                value: value
-            })
-        }
-        : function (target, methodName, value) {
-            target[methodName] = value;
-        },
-
     compare: function (a, b) {
-        return (a === b) ? 0
-                : (a > b) ? 1
-                : -1;
+        return (a === b) ? 0 : (a > b) ? 1 : -1;
     },
 
     dispose: function (obj) {
@@ -113,10 +88,8 @@ var Utils = {
     }
 };
 
-// IEnumerator State
 var State = { Before: 0, Running: 1, After: 2 };
 
-// "Enumerator" is conflict JScript's "Enumerator"
 var IEnumerator = function (initialize, tryGetNext, dispose) {
     var yielder = new Yielder();
     var state = State.Before;
@@ -129,7 +102,8 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
                 case State.Before:
                     state = State.Running;
                     initialize();
-                    // fall through
+                // fall through
+
                 case State.Running:
                     if (tryGetNext.apply(yielder)) {
                         return true;
@@ -138,6 +112,8 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
                         this.dispose();
                         return false;
                     }
+                // fall through
+
                 case State.After:
                     return false;
             }
@@ -160,7 +136,7 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
     };
 };
 
-// for tryGetNext
+// tryGetNext yielder
 var Yielder = function () {
     var current = null;
     this.current = function () { return current; };
@@ -178,9 +154,10 @@ var Enumerable = function (getEnumerator) {
     this.getEnumerator = getEnumerator;
 };
 
-// Utility
+///////////////////
+// Utility Methods
 
-Enumerable.Utils = {}; // container
+Enumerable.Utils = {};
 
 Enumerable.Utils.createLambda = function (expression) {
     return Utils.createLambda(expression);
@@ -211,8 +188,8 @@ Enumerable.Utils.extendTo = function (type) {
         });
     }
 
-    for (var methodName in enumerableProto) {
-        var func = enumerableProto[methodName];
+    for (let methodName in enumerableProto) {
+        const func = enumerableProto[methodName];
 
         // already extended
         if (typeProto[methodName] == func) continue;
@@ -242,8 +219,8 @@ Enumerable.Utils.recallFrom = function (type) {
         delete typeProto.getEnumerator;
     }
 
-    for (var methodName in enumerableProto) {
-        var func = enumerableProto[methodName];
+    for (const methodName in enumerableProto) {
+        const func = enumerableProto[methodName];
 
         if (typeProto[methodName + 'ByLinq']) {
             delete typeProto[methodName + 'ByLinq'];
@@ -254,10 +231,10 @@ Enumerable.Utils.recallFrom = function (type) {
     }
 };
 
-// Generator
+//////////////
+// Generators
 
-Enumerable.choice = function () // variable argument
-{
+Enumerable.choice = function () {
     var args = arguments;
 
     return new Enumerable(function () {
@@ -265,7 +242,7 @@ Enumerable.choice = function () // variable argument
             function () {
                 args = (args[0] instanceof Array) ? args[0]
                     : (args[0].getEnumerator != null) ? args[0].toArray()
-                    : args;
+                        : args;
             },
             function () {
                 return this.yieldReturn(args[Math.floor(Math.random() * args.length)]);
@@ -274,8 +251,7 @@ Enumerable.choice = function () // variable argument
     });
 };
 
-Enumerable.cycle = function () // variable argument
-{
+Enumerable.cycle = function () {
     var args = arguments;
 
     return new Enumerable(function () {
@@ -284,7 +260,7 @@ Enumerable.cycle = function () // variable argument
             function () {
                 args = (args[0] instanceof Array) ? args[0]
                     : (args[0].getEnumerator != null) ? args[0].toArray()
-                    : args;
+                        : args;
             },
             function () {
                 if (index >= args.length) index = 0;
@@ -325,7 +301,7 @@ Enumerable.from = function (obj) {
         });
     }
     if (typeof obj != Types.Function) {
-        // array or array like object
+        // array or array-like object
         if (typeof obj.length == Types.Number) {
             return new ArrayEnumerable(obj);
         }
@@ -342,51 +318,17 @@ Enumerable.from = function (obj) {
                     Functions.Blank);
             });
         }
-
-        // JScript's IEnumerable
-        if (!(obj instanceof Object) && Utils.isIEnumerable(obj)) {
-            return new Enumerable(function () {
-                var isFirst = true;
-                var enumerator;
-                return new IEnumerator(
-                    function () { enumerator = new Enumerator(obj); },
-                    function () {
-                        if (isFirst) isFirst = false;
-                        else enumerator.moveNext();
-
-                        return (enumerator.atEnd()) ? false : this.yieldReturn(enumerator.item());
-                    },
-                    Functions.Blank);
-            });
-        }
-
-        // WinMD IIterable<T>
-        if (typeof Windows === Types.Object && typeof obj.first === Types.Function) {
-            return new Enumerable(function () {
-                var isFirst = true;
-                var enumerator;
-                return new IEnumerator(
-                    function () { enumerator = obj.first(); },
-                    function () {
-                        if (isFirst) isFirst = false;
-                        else enumerator.moveNext();
-
-                        return (enumerator.hasCurrent) ? this.yieldReturn(enumerator.current) : this.yieldBreak();
-                    },
-                    Functions.Blank);
-            });
-        }
     }
 
-    // case function/object : Create keyValuePair[]
+    // case function/object: create keyValuePair[]
     return new Enumerable(function () {
         var array = [];
         var index = 0;
 
         return new IEnumerator(
             function () {
-                for (var key in obj) {
-                    var value = obj[key];
+                for (const key in obj) {
+                    const value = obj[key];
                     if (!(value instanceof Function) && Object.prototype.hasOwnProperty.call(obj, key)) {
                         array.push({ key: key, value: value });
                     }
@@ -401,14 +343,15 @@ Enumerable.from = function (obj) {
     });
 },
 
-Enumerable.make = function (element) {
-    return Enumerable.repeat(element, 1);
-};
+    Enumerable.make = function (element) {
+        return Enumerable.repeat(element, 1);
+    };
 
 // Overload:function(input, pattern)
 // Overload:function(input, pattern, flags)
 Enumerable.matches = function (input, pattern, flags) {
     if (flags == null) flags = "";
+
     if (pattern instanceof RegExp) {
         flags += (pattern.ignoreCase) ? "i" : "";
         flags += (pattern.multiline) ? "m" : "";
@@ -478,14 +421,14 @@ Enumerable.rangeTo = function (start, to, step) {
             var value;
 
             return new IEnumerator(
-            function () { value = start - step; },
-            function () {
-                var next = value += step;
-                return (next <= to)
-                    ? this.yieldReturn(next)
-                    : this.yieldBreak();
-            },
-            Functions.Blank);
+                function () { value = start - step; },
+                function () {
+                    var next = value += step;
+                    return (next <= to)
+                        ? this.yieldReturn(next)
+                        : this.yieldBreak();
+                },
+                Functions.Blank);
         });
     }
     else {
@@ -493,14 +436,14 @@ Enumerable.rangeTo = function (start, to, step) {
             var value;
 
             return new IEnumerator(
-            function () { value = start + step; },
-            function () {
-                var next = value -= step;
-                return (next >= to)
-                    ? this.yieldReturn(next)
-                    : this.yieldBreak();
-            },
-            Functions.Blank);
+                function () { value = start + step; },
+                function () {
+                    var next = value -= step;
+                    return (next >= to)
+                        ? this.yieldReturn(next)
+                        : this.yieldBreak();
+                },
+                Functions.Blank);
         });
     }
 };
@@ -508,7 +451,8 @@ Enumerable.rangeTo = function (start, to, step) {
 // Overload:function(element)
 // Overload:function(element, count)
 Enumerable.repeat = function (element, count) {
-    if (count != null) return Enumerable.repeat(element).take(count);
+    if (count != null)
+        return Enumerable.repeat(element).take(count);
 
     return new Enumerable(function () {
         return new IEnumerator(
@@ -539,7 +483,9 @@ Enumerable.repeatWithFinalize = function (initializer, finalizer) {
 // Overload:function(func)
 // Overload:function(func, count)
 Enumerable.generate = function (func, count) {
-    if (count != null) return Enumerable.generate(func).take(count);
+    if (count != null)
+        return Enumerable.generate(func).take(count);
+
     func = Utils.createLambda(func);
 
     return new Enumerable(function () {
@@ -604,7 +550,6 @@ Enumerable.unfold = function (seed, func) {
 };
 
 Enumerable.defer = function (enumerableFactory) {
-
     return new Enumerable(function () {
         var enumerator;
 
@@ -621,9 +566,11 @@ Enumerable.defer = function (enumerableFactory) {
     });
 };
 
+/////////////////////
 // Extension Methods
 
-/* Projection and Filtering Methods */
+////////////////////////////////////
+// Projection and Filtering Methods
 
 // Overload:function(func)
 // Overload:function(func, resultSelector<element>)
@@ -647,7 +594,7 @@ Enumerable.prototype.traverseBreadthFirst = function (func, resultSelector) {
                         return this.yieldReturn(resultSelector(enumerator.current(), nestLevel));
                     }
 
-                    var next = Enumerable.from(buffer).selectMany(function (x) { return func(x); });
+                    const next = Enumerable.from(buffer).selectMany(function (x) { return func(x); });
                     if (!next.any()) {
                         return false;
                     }
@@ -680,7 +627,7 @@ Enumerable.prototype.traverseDepthFirst = function (func, resultSelector) {
             function () {
                 while (true) {
                     if (enumerator.moveNext()) {
-                        var value = resultSelector(enumerator.current(), enumeratorStack.length);
+                        const value = resultSelector(enumerator.current(), enumeratorStack.length);
                         enumeratorStack.push(enumerator);
                         enumerator = Enumerable.from(func(enumerator.current())).getEnumerator();
                         return this.yieldReturn(value);
@@ -777,7 +724,7 @@ Enumerable.prototype.pairwise = function (selector) {
 Enumerable.prototype.scan = function (seed, func) {
     var isUseSeed;
     if (func == null) {
-        func = Utils.createLambda(seed); // arguments[0]
+        func = Utils.createLambda(seed);
         isUseSeed = false;
     } else {
         func = Utils.createLambda(func);
@@ -863,7 +810,7 @@ Enumerable.prototype.selectMany = function (collectionSelector, resultSelector) 
                 }
                 do {
                     if (middleEnumerator == null) {
-                        var middleSeq = collectionSelector(enumerator.current(), index++);
+                        const middleSeq = collectionSelector(enumerator.current(), index++);
                         middleEnumerator = Enumerable.from(middleSeq).getEnumerator();
                     }
                     if (middleEnumerator.moveNext()) {
@@ -930,7 +877,7 @@ Enumerable.prototype.choose = function (selector) {
             function () { enumerator = source.getEnumerator(); },
             function () {
                 while (enumerator.moveNext()) {
-                    var result = selector(enumerator.current(), index++);
+                    const result = selector(enumerator.current(), index++);
                     if (result != null) {
                         return this.yieldReturn(result);
                     }
@@ -973,7 +920,7 @@ Enumerable.prototype.zip = function () {
     var source = this;
     // optimized case:argument is 2
     if (arguments.length == 2) {
-        var second = arguments[0];
+        const second = arguments[0];
 
         return new Enumerable(function () {
             var firstEnumerator;
@@ -981,23 +928,23 @@ Enumerable.prototype.zip = function () {
             var index = 0;
 
             return new IEnumerator(
-            function () {
-                firstEnumerator = source.getEnumerator();
-                secondEnumerator = Enumerable.from(second).getEnumerator();
-            },
-            function () {
-                if (firstEnumerator.moveNext() && secondEnumerator.moveNext()) {
-                    return this.yieldReturn(selector(firstEnumerator.current(), secondEnumerator.current(), index++));
-                }
-                return false;
-            },
-            function () {
-                try {
-                    Utils.dispose(firstEnumerator);
-                } finally {
-                    Utils.dispose(secondEnumerator);
-                }
-            });
+                function () {
+                    firstEnumerator = source.getEnumerator();
+                    secondEnumerator = Enumerable.from(second).getEnumerator();
+                },
+                function () {
+                    if (firstEnumerator.moveNext() && secondEnumerator.moveNext()) {
+                        return this.yieldReturn(selector(firstEnumerator.current(), secondEnumerator.current(), index++));
+                    }
+                    return false;
+                },
+                function () {
+                    try {
+                        Utils.dispose(firstEnumerator);
+                    } finally {
+                        Utils.dispose(secondEnumerator);
+                    }
+                });
         });
     }
     else {
@@ -1006,28 +953,28 @@ Enumerable.prototype.zip = function () {
             var index = 0;
 
             return new IEnumerator(
-            function () {
-                var array = Enumerable.make(source)
-                    .concat(Enumerable.from(args).takeExceptLast().select(Enumerable.from))
-                    .select(function (x) { return x.getEnumerator() })
-                    .toArray();
-                enumerators = Enumerable.from(array);
-            },
-            function () {
-                if (enumerators.all(function (x) { return x.moveNext() })) {
-                    var array = enumerators
-                        .select(function (x) { return x.current() })
+                function () {
+                    var array = Enumerable.make(source)
+                        .concat(Enumerable.from(args).takeExceptLast().select(Enumerable.from))
+                        .select(function (x) { return x.getEnumerator() })
                         .toArray();
-                    array.push(index++);
-                    return this.yieldReturn(selector.apply(null, array));
-                }
-                else {
-                    return this.yieldBreak();
-                }
-            },
-            function () {
-                Enumerable.from(enumerators).forEach(Utils.dispose);
-            });
+                    enumerators = Enumerable.from(array);
+                },
+                function () {
+                    if (enumerators.all(function (x) { return x.moveNext() })) {
+                        const array = enumerators
+                            .select(function (x) { return x.current() })
+                            .toArray();
+                        array.push(index++);
+                        return this.yieldReturn(selector.apply(null, array));
+                    }
+                    else {
+                        return this.yieldBreak();
+                    }
+                },
+                function () {
+                    Enumerable.from(enumerators).forEach(Utils.dispose);
+                });
         });
     }
 };
@@ -1051,7 +998,7 @@ Enumerable.prototype.merge = function () {
             function () {
                 while (enumerators.length > 0) {
                     index = (index >= enumerators.length - 1) ? 0 : index + 1;
-                    var enumerator = enumerators[index];
+                    const enumerator = enumerators[index];
 
                     if (enumerator.moveNext()) {
                         return this.yieldReturn(enumerator.current());
@@ -1069,7 +1016,8 @@ Enumerable.prototype.merge = function () {
     });
 };
 
-/* Join Methods */
+////////////////
+// Join Methods
 
 // Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector)
 // Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector, compareSelector)
@@ -1094,7 +1042,7 @@ Enumerable.prototype.join = function (inner, outerKeySelector, innerKeySelector,
             function () {
                 while (true) {
                     if (innerElements != null) {
-                        var innerElement = innerElements[innerCount++];
+                        let innerElement = innerElements[innerCount++];
                         if (innerElement !== undefined) {
                             return this.yieldReturn(resultSelector(outerEnumerator.current(), innerElement));
                         }
@@ -1104,7 +1052,7 @@ Enumerable.prototype.join = function (inner, outerKeySelector, innerKeySelector,
                     }
 
                     if (outerEnumerator.moveNext()) {
-                        var key = outerKeySelector(outerEnumerator.current());
+                        const key = outerKeySelector(outerEnumerator.current());
                         innerElements = lookup.get(key).toArray();
                     } else {
                         return false;
@@ -1135,7 +1083,7 @@ Enumerable.prototype.groupJoin = function (inner, outerKeySelector, innerKeySele
             },
             function () {
                 if (enumerator.moveNext()) {
-                    var innerElement = lookup.get(outerKeySelector(enumerator.current()));
+                    const innerElement = lookup.get(outerKeySelector(enumerator.current()));
                     return this.yieldReturn(resultSelector(enumerator.current(), innerElement));
                 }
                 return false;
@@ -1144,7 +1092,8 @@ Enumerable.prototype.groupJoin = function (inner, outerKeySelector, innerKeySele
     });
 };
 
-/* Set Methods */
+///////////////
+// Set Methods
 
 Enumerable.prototype.all = function (predicate) {
     predicate = Utils.createLambda(predicate);
@@ -1188,34 +1137,34 @@ Enumerable.prototype.concat = function () {
     var source = this;
 
     if (arguments.length == 1) {
-        var second = arguments[0];
+        const second = arguments[0];
 
         return new Enumerable(function () {
             var firstEnumerator;
             var secondEnumerator;
 
             return new IEnumerator(
-            function () { firstEnumerator = source.getEnumerator(); },
-            function () {
-                if (secondEnumerator == null) {
-                    if (firstEnumerator.moveNext()) return this.yieldReturn(firstEnumerator.current());
-                    secondEnumerator = Enumerable.from(second).getEnumerator();
-                }
-                if (secondEnumerator.moveNext()) return this.yieldReturn(secondEnumerator.current());
-                return false;
-            },
-            function () {
-                try {
-                    Utils.dispose(firstEnumerator);
-                }
-                finally {
-                    Utils.dispose(secondEnumerator);
-                }
-            });
+                function () { firstEnumerator = source.getEnumerator(); },
+                function () {
+                    if (secondEnumerator == null) {
+                        if (firstEnumerator.moveNext()) return this.yieldReturn(firstEnumerator.current());
+                        secondEnumerator = Enumerable.from(second).getEnumerator();
+                    }
+                    if (secondEnumerator.moveNext()) return this.yieldReturn(secondEnumerator.current());
+                    return false;
+                },
+                function () {
+                    try {
+                        Utils.dispose(firstEnumerator);
+                    }
+                    finally {
+                        Utils.dispose(secondEnumerator);
+                    }
+                });
         });
     }
     else {
-        var args = arguments;
+        const args = arguments;
 
         return new Enumerable(function () {
             var enumerators;
@@ -1229,7 +1178,7 @@ Enumerable.prototype.concat = function () {
                 },
                 function () {
                     while (enumerators.length > 0) {
-                        var enumerator = enumerators[0];
+                        const enumerator = enumerators[0];
 
                         if (enumerator.moveNext()) {
                             return this.yieldReturn(enumerator.current());
@@ -1324,7 +1273,7 @@ Enumerable.prototype.alternate = function (alternateValueOrSequence) {
                         continue; // GOTO
                     }
                     else if (buffer != null) {
-                        var retVal = buffer;
+                        const retVal = buffer;
                         buffer = null;
                         return this.yieldReturn(retVal);
                     }
@@ -1405,7 +1354,7 @@ Enumerable.prototype.distinctUntilChanged = function (compareSelector) {
             },
             function () {
                 while (enumerator.moveNext()) {
-                    var key = compareSelector(enumerator.current());
+                    const key = compareSelector(enumerator.current());
 
                     if (initial) {
                         initial = false;
@@ -1444,7 +1393,7 @@ Enumerable.prototype.except = function (second, compareSelector) {
             },
             function () {
                 while (enumerator.moveNext()) {
-                    var current = enumerator.current();
+                    const current = enumerator.current();
                     if (!keys.contains(current)) {
                         keys.add(current);
                         return this.yieldReturn(current);
@@ -1477,7 +1426,7 @@ Enumerable.prototype.intersect = function (second, compareSelector) {
             },
             function () {
                 while (enumerator.moveNext()) {
-                    var current = enumerator.current();
+                    const current = enumerator.current();
                     if (!outs.contains(current) && keys.contains(current)) {
                         outs.add(current);
                         return this.yieldReturn(current);
@@ -1496,11 +1445,11 @@ Enumerable.prototype.sequenceEqual = function (second, compareSelector) {
 
     var firstEnumerator = this.getEnumerator();
     try {
-        var secondEnumerator = Enumerable.from(second).getEnumerator();
+        const secondEnumerator = Enumerable.from(second).getEnumerator();
         try {
             while (firstEnumerator.moveNext()) {
                 if (!secondEnumerator.moveNext()
-                || compareSelector(firstEnumerator.current()) !== compareSelector(secondEnumerator.current())) {
+                    || compareSelector(firstEnumerator.current()) !== compareSelector(secondEnumerator.current())) {
                     return false;
                 }
             }
@@ -1563,7 +1512,8 @@ Enumerable.prototype.union = function (second, compareSelector) {
     });
 };
 
-/* Ordering Methods */
+////////////////////
+// Ordering Methods
 
 Enumerable.prototype.orderBy = function (keySelector, comparer) {
     return new OrderedEnumerable(this, keySelector, comparer, false);
@@ -1604,7 +1554,7 @@ Enumerable.prototype.shuffle = function () {
             function () { buffer = source.toArray(); },
             function () {
                 if (buffer.length > 0) {
-                    var i = Math.floor(Math.random() * buffer.length);
+                    const i = Math.floor(Math.random() * buffer.length);
                     return this.yieldReturn(buffer.splice(i, 1)[0]);
                 }
                 return false;
@@ -1635,12 +1585,12 @@ Enumerable.prototype.weightedSample = function (weightSelector) {
             },
             function () {
                 if (sortedByBound.length > 0) {
-                    var draw = Math.floor(Math.random() * totalWeight) + 1;
+                    const draw = Math.floor(Math.random() * totalWeight) + 1;
 
-                    var lower = -1;
-                    var upper = sortedByBound.length;
+                    let lower = -1;
+                    let upper = sortedByBound.length;
                     while (upper - lower > 1) {
-                        var index = Math.floor((lower + upper) / 2);
+                        const index = Math.floor((lower + upper) / 2);
                         if (sortedByBound[index].bound >= draw) {
                             upper = index;
                         }
@@ -1658,7 +1608,8 @@ Enumerable.prototype.weightedSample = function (weightSelector) {
     });
 };
 
-/* Grouping Methods */
+////////////////////
+// Grouping Methods
 
 // Overload:function(keySelector)
 // Overload:function(keySelector,elementSelector)
@@ -1697,7 +1648,6 @@ Enumerable.prototype.groupBy = function (keySelector, elementSelector, resultSel
 // Overload:function(keySelector,elementSelector,resultSelector)
 // Overload:function(keySelector,elementSelector,resultSelector,compareSelector)
 Enumerable.prototype.partitionBy = function (keySelector, elementSelector, resultSelector, compareSelector) {
-
     var source = this;
     keySelector = Utils.createLambda(keySelector);
     elementSelector = Utils.createLambda(elementSelector);
@@ -1737,7 +1687,7 @@ Enumerable.prototype.partitionBy = function (keySelector, elementSelector, resul
                 }
 
                 if (group.length > 0) {
-                    var result = (hasResultSelector)
+                    const result = (hasResultSelector)
                         ? resultSelector(key, Enumerable.from(group))
                         : resultSelector(key, group);
                     if (hasNext) {
@@ -1778,7 +1728,8 @@ Enumerable.prototype.buffer = function (count) {
     });
 };
 
-/* Aggregate Methods */
+/////////////////////
+// Aggregate Methods
 
 // Overload:function(func)
 // Overload:function(seed,func)
@@ -1810,7 +1761,7 @@ Enumerable.prototype.count = function (predicate) {
 
     var count = 0;
     this.forEach(function (x, i) {
-        if (predicate(x, i))++count;
+        if (predicate(x, i)) ++count;
     });
     return count;
 };
@@ -1846,7 +1797,8 @@ Enumerable.prototype.sum = function (selector) {
     return this.select(selector).aggregate(0, function (a, b) { return a + b; });
 };
 
-/* Paging Methods */
+//////////////////
+// Paging Methods
 
 Enumerable.prototype.elementAt = function (index) {
     var value;
@@ -1992,9 +1944,7 @@ Enumerable.prototype.skip = function (count) {
         return new IEnumerator(
             function () {
                 enumerator = source.getEnumerator();
-                while (index++ < count && enumerator.moveNext()) {
-                }
-                ;
+                while (index++ < count && enumerator.moveNext()) { }
             },
             function () {
                 return (enumerator.moveNext())
@@ -2179,7 +2129,8 @@ Enumerable.prototype.lastIndexOf = function (item) {
     return result;
 };
 
-/* Convert Methods */
+///////////////////
+// Convert Methods
 
 Enumerable.prototype.cast = function () {
     return this;
@@ -2260,8 +2211,8 @@ Enumerable.prototype.toJoinedString = function (separator, selector) {
     return this.select(selector).toArray().join(separator);
 };
 
-
-/* Action Methods */
+//////////////////
+// Action Methods
 
 // Overload:function(action<element>)
 // Overload:function(action<element,index>)
@@ -2304,44 +2255,19 @@ Enumerable.prototype.forEach = function (action) {
     }
 };
 
-// Overload:function()
-// Overload:function(separator)
-// Overload:function(separator,selector)
-Enumerable.prototype.write = function (separator, selector) {
-    if (separator == null) separator = "";
-    selector = Utils.createLambda(selector);
-
-    var isFirst = true;
-    this.forEach(function (item) {
-        if (isFirst) isFirst = false;
-        else document.write(separator);
-        document.write(selector(item));
-    });
-};
-
-// Overload:function()
-// Overload:function(selector)
-Enumerable.prototype.writeLine = function (selector) {
-    selector = Utils.createLambda(selector);
-
-    this.forEach(function (item) {
-        document.writeln(selector(item) + "<br />");
-    });
-};
-
 Enumerable.prototype.force = function () {
     var enumerator = this.getEnumerator();
 
     try {
-        while (enumerator.moveNext()) {
-        }
+        while (enumerator.moveNext()) { }
     }
     finally {
         Utils.dispose(enumerator);
     }
 };
 
-/* Functional Methods */
+//////////////////////
+// Functional Methods
 
 Enumerable.prototype.letBind = function (func) {
     func = Utils.createLambda(func);
@@ -2427,7 +2353,7 @@ Enumerable.prototype.memoize = function () {
     });
 };
 
-/* Iterator (ES6 for..of) support */
+// Iterator support (ES6 for..of)
 if (Utils.hasNativeIteratorSupport()) {
     Enumerable.prototype[Symbol.iterator] = function () {
         return {
@@ -2446,7 +2372,8 @@ if (Utils.hasNativeIteratorSupport()) {
     };
 }
 
-/* Error Handling Methods */
+//////////////////////////
+// Error Handling Methods
 
 Enumerable.prototype.catchError = function (handler) {
     handler = Utils.createLambda(handler);
@@ -2495,7 +2422,8 @@ Enumerable.prototype.finallyAction = function (finallyAction) {
     });
 };
 
-/* For Debug Methods */
+/////////////////
+// Debug Methods
 
 // Overload:function()
 // Overload:function(selector)
@@ -2523,7 +2451,8 @@ Enumerable.prototype.trace = function (message, selector) {
     });
 };
 
-// private
+///////////
+// Private
 
 var OrderedEnumerable = function (source, keySelector, comparer, descending, parent) {
     this.source = source;
@@ -2597,7 +2526,7 @@ SortContext.prototype.GenerateKeys = function (source) {
     var len = source.length;
     var keySelector = this.keySelector;
     var keys = new Array(len);
-    for (var i = 0; i < len; i++) keys[i] = keySelector(source[i]);
+    for (let i = 0; i < len; i++) keys[i] = keySelector(source[i]);
     this.keys = keys;
 
     if (this.child != null) this.child.GenerateKeys(source);
@@ -2621,8 +2550,6 @@ var DisposableEnumerable = function (getEnumerator, dispose) {
     Enumerable.call(this, getEnumerator);
 };
 DisposableEnumerable.prototype = new Enumerable();
-
-// optimize array or arraylike object
 
 var ArrayEnumerable = function (source) {
     this.getSource = function () { return source; };
@@ -2781,8 +2708,8 @@ WhereEnumerable.prototype.where = function (predicate) {
     predicate = Utils.createLambda(predicate);
 
     if (predicate.length <= 1) {
-        var prevPredicate = this.prevPredicate;
-        var composedPredicate = function (x) { return prevPredicate(x) && predicate(x); };
+        const prevPredicate = this.prevPredicate;
+        const composedPredicate = function (x) { return prevPredicate(x) && predicate(x); };
         return new WhereEnumerable(this.prevSource, composedPredicate);
     }
     else {
@@ -2836,12 +2763,12 @@ WhereSelectEnumerable.prototype.select = function (selector) {
     selector = Utils.createLambda(selector);
 
     if (selector.length <= 1) {
-        var prevSelector = this.prevSelector;
-        var composedSelector = function (x) { return selector(prevSelector(x)); };
+        const prevSelector = this.prevSelector;
+        const composedSelector = function (x) { return selector(prevSelector(x)); };
         return new WhereSelectEnumerable(this.prevSource, this.prevPredicate, composedSelector);
     }
     else {
-        // if selector use index, can't compose
+        // if selector uses index, can't compose
         return Enumerable.prototype.select.call(this, selector);
     }
 };
@@ -2865,6 +2792,7 @@ WhereSelectEnumerable.prototype.getEnumerator = function () {
         function () { Utils.dispose(enumerator); });
 };
 
+///////////////
 // Collections
 
 var Dictionary = (function () {
@@ -2941,8 +2869,8 @@ var Dictionary = (function () {
             var hash = computeHashCode(compareKey);
             var entry = new HashEntry(key, value);
             if (callHasOwnProperty(this.buckets, hash)) {
-                var array = this.buckets[hash];
-                for (var i = 0; i < array.length; i++) {
+                const array = this.buckets[hash];
+                for (let i = 0; i < array.length; i++) {
                     if (this.compareSelector(array[i].key) === compareKey) {
                         this.entryList.replace(array[i], entry);
                         array[i] = entry;
@@ -2963,8 +2891,8 @@ var Dictionary = (function () {
             if (!callHasOwnProperty(this.buckets, hash)) return undefined;
 
             var array = this.buckets[hash];
-            for (var i = 0; i < array.length; i++) {
-                var entry = array[i];
+            for (let i = 0; i < array.length; i++) {
+                const entry = array[i];
                 if (this.compareSelector(entry.key) === compareKey) return entry.value;
             }
             return undefined;
@@ -2974,10 +2902,10 @@ var Dictionary = (function () {
             var compareKey = this.compareSelector(key);
             var hash = computeHashCode(compareKey);
             if (callHasOwnProperty(this.buckets, hash)) {
-                var array = this.buckets[hash];
-                for (var i = 0; i < array.length; i++) {
+                const array = this.buckets[hash];
+                for (let i = 0; i < array.length; i++) {
                     if (this.compareSelector(array[i].key) === compareKey) {
-                        var newEntry = new HashEntry(key, value);
+                        const newEntry = new HashEntry(key, value);
                         this.entryList.replace(array[i], newEntry);
                         array[i] = newEntry;
                         return true;
@@ -2993,7 +2921,7 @@ var Dictionary = (function () {
             if (!callHasOwnProperty(this.buckets, hash)) return false;
 
             var array = this.buckets[hash];
-            for (var i = 0; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 if (this.compareSelector(array[i].key) === compareKey) return true;
             }
             return false;
@@ -3011,7 +2939,7 @@ var Dictionary = (function () {
             if (!callHasOwnProperty(this.buckets, hash)) return;
 
             var array = this.buckets[hash];
-            for (var i = 0; i < array.length; i++) {
+            for (let i = 0; i < array.length; i++) {
                 if (this.compareSelector(array[i].key) === compareKey) {
                     this.entryList.remove(array[i]);
                     array.splice(i, 1);
@@ -3035,7 +2963,7 @@ var Dictionary = (function () {
                     function () { currentEntry = self.entryList.first; },
                     function () {
                         if (currentEntry != null) {
-                            var result = { key: currentEntry.key, value: currentEntry.value };
+                            const result = { key: currentEntry.key, value: currentEntry.value };
                             currentEntry = currentEntry.next;
                             return this.yieldReturn(result);
                         }
