@@ -1065,6 +1065,54 @@ Enumerable.prototype.join = function (inner, outerKeySelector, innerKeySelector,
 
 // Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector)
 // Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector, compareSelector)
+Enumerable.prototype.leftJoin = function (inner, outerKeySelector, innerKeySelector, resultSelector, compareSelector) {
+    outerKeySelector = Utils.createLambda(outerKeySelector);
+    innerKeySelector = Utils.createLambda(innerKeySelector);
+    resultSelector = Utils.createLambda(resultSelector);
+    compareSelector = Utils.createLambda(compareSelector);
+    var source = this;
+
+    return new Enumerable(function () {
+        var outerEnumerator;
+        var lookup;
+        var innerElements = null;
+        var innerCount = 0;
+
+        return new IEnumerator(
+            function () {
+                outerEnumerator = source.getEnumerator();
+                lookup = Enumerable.from(inner).toLookup(innerKeySelector, Functions.Identity, compareSelector);
+            },
+            function () {
+                while (true) {
+                    if (innerElements != null) {
+                        let innerElement = innerElements[innerCount++];
+                        if (innerElement !== undefined) {
+                            return this.yieldReturn(resultSelector(outerEnumerator.current(), innerElement));
+                        }
+
+                        innerElement = null;
+                        innerCount = 0;
+                    }
+
+                    if (outerEnumerator.moveNext()) {
+                        const key = outerKeySelector(outerEnumerator.current());
+                        innerElements = lookup.get(key).toArray();
+                        // execute once if innerElements is NULL
+                        if (innerElements == null) {
+                            return this.yieldReturn(resultSelector(outerEnumerator.current(), null));
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            },
+            function () { Utils.dispose(outerEnumerator); });
+    });
+};
+
+// Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector)
+// Overload:function (inner, outerKeySelector, innerKeySelector, resultSelector, compareSelector)
 Enumerable.prototype.groupJoin = function (inner, outerKeySelector, innerKeySelector, resultSelector, compareSelector) {
     outerKeySelector = Utils.createLambda(outerKeySelector);
     innerKeySelector = Utils.createLambda(innerKeySelector);
