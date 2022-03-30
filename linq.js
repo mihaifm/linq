@@ -1099,7 +1099,7 @@ Enumerable.prototype.leftJoin = function (inner, outerKeySelector, innerKeySelec
                         const key = outerKeySelector(outerEnumerator.current());
                         innerElements = lookup.get(key).toArray();
                         // execute once if innerElements is NULL
-                        if (innerElements == null) {
+                        if (innerElements == null || innerElements.length == 0) {
                             return this.yieldReturn(resultSelector(outerEnumerator.current(), null));
                         }
                     } else {
