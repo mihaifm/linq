@@ -21,8 +21,7 @@ declare namespace Enumerable {
   export function from<T>(obj: T[]): IEnumerable<T>;
   export function from<T>(obj: Iterator<T>): IEnumerable<T>;
   export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>;
-  export function from<T>(obj: { [key: string]: T }): IEnumerable<{ key: string; value: T }>;
-  export function from<T>(obj: Record<PropertyKey, T>): IEnumerable<{ key: string; value: T }>;
+  export function from<K extends PropertyKey, T>(obj: Record<K, T>): IEnumerable<{ key: K; value: T }>;
   export function make<T>(element: T): IEnumerable<T>;
   export function matches<T>(input: string, pattern: RegExp): IEnumerable<T>;
   export function matches<T>(input: string, pattern: string, flags?: string): IEnumerable<T>;
