@@ -144,7 +144,7 @@ You can also load the library via a CDN:
 
 # Credits
 
-[Yoshifumi Kawai](https://github.com/neuecc) developed the [original version](http://linqjs.codeplex.com/) of this library, currently no longer maintained.
+[Yoshifumi Kawai](https://github.com/neuecc) developed the [original version](https://github.com/neuecc/linq.js/) of this library.
 
 # License
 

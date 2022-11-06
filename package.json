@@ -3,7 +3,7 @@
   "author": "Mihai Ciuraru <mihaixc@gmail.com>",
   "description": "linq.js - LINQ for JavaScript",
   "type": "module",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "license": "MIT",
   "homepage": "https://github.com/mihaifm/linq",
   "repository": {
