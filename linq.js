@@ -300,6 +300,22 @@ Enumerable.from = function (obj) {
                 Functions.Blank);
         });
     }
+    if (typeof obj == Types.Function && Object.keys(obj).length == 0) {
+        return new Enumerable(function () {
+            var orig;
+
+            return new IEnumerator(
+                function () {
+                    orig = obj()[Symbol.iterator]();
+                },
+                function () {
+                    var next = orig.next();
+                    return (next.done ? false : (this.yieldReturn(next.value)));
+                },
+                Functions.Blank);
+        });
+    }
+
     if (typeof obj != Types.Function) {
         // array or array-like object
         if (typeof obj.length == Types.Number) {

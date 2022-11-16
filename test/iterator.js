@@ -35,3 +35,22 @@ test("from Iterable", function () {
     }
     deepEqual(actual, ["abc", "def"]);
 });
+
+test("reusable iterator", function () {
+    const set = new Set([1, 2, 3])
+
+    let a = Enumerable.from(set.entries());
+
+    deepEqual(a.toArray(), [[1, 1], [2, 2], [3, 3]]);
+    deepEqual(a.toArray(), []);
+
+    let b = Enumerable.from(() => set.entries());
+
+    deepEqual(b.toArray(), [[1, 1], [2, 2], [3, 3]]);
+    deepEqual(b.toArray(), [[1, 1], [2, 2], [3, 3]]);
+
+    let c = Enumerable.from(() => ['x', 'y', 'z']);
+
+    deepEqual(c.toArray(), ['x', 'y', 'z']);
+    deepEqual(c.toArray(), ['x', 'y', 'z']);
+});
