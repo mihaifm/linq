@@ -142,6 +142,28 @@ You can also load the library via a CDN:
 | jsDelivr   | <https://jsdelivr.com/package/npm/linq>    |
 | packd      | <https://bundle.run/linq@latest?name=linq> |
 
+## Rhino
+
+This engine is programmed in Java and generates a class from the compiled JavaScript code. It was bundled with Java SE 6 and used as a programming interface in some business products. Rhino can be used with Java 8 and above and is mostly compatible with the ECMAScript 5 standard. To use linq with Rhino, download the latest linq release. It is necessary to modify the source code of linq.js to the conditions of Rhino:
+
+* Rhino does not support variable declaration with `let` and `const`, therefore these must be replaced by `var`.
+* Rhino does not support `export` declaration, therefore the line `export default Enumerable;` at the end must be deleted.
+* Rhino has no console window, therefore it is recommended to replace the code sequences `if (typeof console !== Types.Undefined) { console.log(...); }` with `java.lang.System.out.println(...)`.
+
+After these preparations you can load it in your code with `load` command and use it:
+
+```js
+load("linq.js");
+
+var result = Enumerable.range(1, 10)
+  .where( function(i) { return i % 3 == 0 } )
+  .select( function(i) { return i * 10 } );
+
+java.lang.System.out.println(
+  JSON.stringify(result.toArray())
+); // [ 30, 60, 90 ]
+```
+
 # Credits
 
 [Yoshifumi Kawai](https://github.com/neuecc) developed the [original version](https://github.com/neuecc/linq.js/) of this library.
