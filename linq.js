@@ -323,7 +323,7 @@ Enumerable.from = function (obj) {
         }
 
         // iterable object
-        if (typeof Symbol !== 'undefined' && typeof obj[Symbol.iterator] !== 'undefined') {
+        if (typeof Symbol !== 'undefined' && typeof obj.next !== 'undefined') {
             return new Enumerable(function () {
                 return new IEnumerator(
                     Functions.Blank,

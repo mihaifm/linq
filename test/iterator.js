@@ -11,13 +11,16 @@ test("for..of", function () {
     deepEqual(actual, [1, 2, 3]);
 });
 
-test("Symbol.iterator", function ()
-{
-    let actual = [1,2,3,4];
+test("Symbol.iterator", function () {
+    let actual = [1, 2, 3, 4];
     let expected = Array.from(Enumerable.from(actual));
     deepEqual(actual, expected);
-    let actual2 = actual.map(function(x) { return x * 2 }); // [2,4,6,8];
-    expected = Enumerable.from(actual).select(function(x) { return x * 2 });
+    let actual2 = actual.map(function (x) {
+        return x * 2
+    }); // [2,4,6,8];
+    expected = Enumerable.from(actual).select(function (x) {
+        return x * 2
+    });
     deepEqual(actual2, Array.from(expected));
 });
 
@@ -34,6 +37,39 @@ test("from Iterable", function () {
         actual.push(a);
     }
     deepEqual(actual, ["abc", "def"]);
+});
+
+test("from Symbol.iterator", function () {
+    const n = {
+        // This is just a simple replacement for the data structure that needs to be traversed.
+        // It may actually be a tree or other data structure implemented by a custom traversal.
+        nums: [1, 2, 3],
+
+        [Symbol.iterator]() {
+            let idx = 0;
+            return {
+                next: () => {
+                    if (idx < this.nums.length) {
+                        return {
+                            value: this.nums[idx++],
+                            done: false,
+                        };
+                    } else return {
+                        value: undefined,
+                        done: true,
+                    };
+                },
+            };
+        }
+    }
+
+    deepEqual(Enumerable.from(n[Symbol.iterator]()).toArray(), [1, 2, 3]);
+
+    let actual = [];
+    for (var a of n) {
+        actual.push(a);
+    }
+    deepEqual(actual, [1, 2, 3]);
 });
 
 test("reusable iterator", function () {
