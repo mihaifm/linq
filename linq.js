@@ -323,6 +323,20 @@ Enumerable.from = function (obj) {
         }
 
         // iterable object
+        if (typeof Symbol !== 'undefined' && typeof obj[Symbol.iterator] !== 'undefined') {
+            let iterator = obj[Symbol.iterator]();
+            return new Enumerable(function () {
+                return new IEnumerator(
+                    Functions.Blank,
+                    function () {
+                        var next = iterator.next();
+                        return (next.done ? false : (this.yieldReturn(next.value)));
+                    },
+                    Functions.Blank);
+            });
+        }
+
+        // iterator object
         if (typeof Symbol !== 'undefined' && typeof obj.next !== 'undefined') {
             return new Enumerable(function () {
                 return new IEnumerator(

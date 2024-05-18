@@ -20,6 +20,7 @@ declare namespace Enumerable {
   export function from(obj: string): IEnumerable<string>;
   export function from<T>(obj: T[]): IEnumerable<T>;
   export function from<T>(obj: Iterator<T>): IEnumerable<T>;
+  export function from<T>(obj: Iterable<T>): IEnumerable<T>;
   export function from<T>(obj: { length: number;[x: number]: T; }): IEnumerable<T>;
   export function from<K extends PropertyKey, T>(obj: Record<K, T>): IEnumerable<{ key: K; value: T }>;
   export function make<T>(element: T): IEnumerable<T>;
