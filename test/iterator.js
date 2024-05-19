@@ -21,7 +21,7 @@ test("Symbol.iterator", function ()
     deepEqual(actual2, Array.from(expected));
 });
 
-test("from Iterable", function () {
+test("from Generator", function () {
     function* words() {
         yield "abc";
         yield "def";
