@@ -36,7 +36,27 @@ test("from Iterable", function () {
     deepEqual(actual, ["abc", "def"]);
 });
 
-test("from Symbol.iterator", function () {
+test("from Iterable object", function () {
+    const map = new Map();
+
+    map.set(1, 2);
+    map.set(2, 4);
+
+    deepEqual(Enumerable
+            .from(map)
+            .select(item => ({key: item[0], value: item[1]}))
+            .select(item=>item.key)
+            .toArray(),
+        [1, 2]);
+
+    let actual = [];
+    for (var a of map) {
+        actual.push(a[0]);
+    }
+    deepEqual(actual, [1, 2]);
+});
+
+test("from Iterator object", function () {
     const n = {
         // This is just a simple replacement for the data structure that needs to be traversed.
         // It may actually be a tree or other data structure implemented by a custom traversal.
