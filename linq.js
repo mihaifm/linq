@@ -4,14 +4,9 @@
  *------------------------------------------------------------------------*/
 
 var Functions = {
-    Identity: function (x) {
-        return x;
-    },
-    True: function () {
-        return true;
-    },
-    Blank: function () {
-    }
+    Identity: function (x) { return x; },
+    True: function () { return true; },
+    Blank: function () { }
 };
 
 var Types = {
@@ -20,11 +15,10 @@ var Types = {
     String: typeof "",
     Object: typeof {},
     Undefined: typeof undefined,
-    Function: typeof function () {
-    }
+    Function: typeof function () { }
 };
 
-var funcCache = {"": Functions.Identity};
+var funcCache = { "": Functions.Identity };
 
 var Utils = {
     createLambda: function (expression) {
@@ -61,7 +55,8 @@ var Utils = {
                 f = new Function(args, "return " + expression);
                 funcCache[expression] = f;
                 return f;
-            } else {
+            }
+            else {
                 const expr = expression.match(/^[(\s]*([^()]*?)[)\s]*=>(.*)/);
                 f = new Function(expr[1], (expr[2].match(/\breturn\b/) ? expr[2] : "return " + expr[2]));
                 funcCache[expression] = f;
@@ -93,7 +88,7 @@ var Utils = {
     }
 };
 
-var State = {Before: 0, Running: 1, After: 2};
+var State = { Before: 0, Running: 1, After: 2 };
 
 var IEnumerator = function (initialize, tryGetNext, dispose) {
     var yielder = new Yielder();
@@ -112,7 +107,8 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
                 case State.Running:
                     if (tryGetNext.apply(yielder)) {
                         return true;
-                    } else {
+                    }
+                    else {
                         this.dispose();
                         return false;
                     }
@@ -121,7 +117,8 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
                 case State.After:
                     return false;
             }
-        } catch (e) {
+        }
+        catch (e) {
             this.dispose();
             throw e;
         }
@@ -132,7 +129,8 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
 
         try {
             dispose();
-        } finally {
+        }
+        finally {
             state = State.After;
         }
     };
@@ -141,9 +139,7 @@ var IEnumerator = function (initialize, tryGetNext, dispose) {
 // tryGetNext yielder
 var Yielder = function () {
     var current = null;
-    this.current = function () {
-        return current;
-    };
+    this.current = function () { return current; };
     this.yieldReturn = function (value) {
         current = value;
         return true;
@@ -184,7 +180,8 @@ Enumerable.Utils.extendTo = function (type) {
         Utils.defineProperty(typeProto, "getSource", function () {
             return this;
         });
-    } else {
+    }
+    else {
         enumerableProto = Enumerable.prototype;
         Utils.defineProperty(typeProto, "getEnumerator", function () {
             return Enumerable.from(this).getEnumerator();
@@ -216,7 +213,8 @@ Enumerable.Utils.recallFrom = function (type) {
     if (type === Array) {
         enumerableProto = ArrayEnumerable.prototype;
         delete typeProto.getSource;
-    } else {
+    }
+    else {
         enumerableProto = Enumerable.prototype;
         delete typeProto.getEnumerator;
     }
@@ -226,7 +224,8 @@ Enumerable.Utils.recallFrom = function (type) {
 
         if (typeProto[methodName + 'ByLinq']) {
             delete typeProto[methodName + 'ByLinq'];
-        } else if (typeProto[methodName] == func && func instanceof Function) {
+        }
+        else if (typeProto[methodName] == func && func instanceof Function) {
             delete typeProto[methodName];
         }
     }
@@ -275,9 +274,7 @@ Enumerable.empty = function () {
     return new Enumerable(function () {
         return new IEnumerator(
             Functions.Blank,
-            function () {
-                return false;
-            },
+            function () { return false; },
             Functions.Blank);
     });
 };
@@ -330,9 +327,7 @@ Enumerable.from = function (obj) {
             let iterator;
             return new Enumerable(function () {
                 return new IEnumerator(
-                    function () {
-                        iterator = obj[Symbol.iterator]()
-                    },
+                    iterator = obj[Symbol.iterator](),
                     function () {
                         var next = iterator.next();
                         return (next.done ? false : (this.yieldReturn(next.value)));
@@ -365,7 +360,7 @@ Enumerable.from = function (obj) {
                 for (const key in obj) {
                     const value = obj[key];
                     if (!(value instanceof Function) && Object.prototype.hasOwnProperty.call(obj, key)) {
-                        array.push({key: key, value: value});
+                        array.push({ key: key, value: value });
                     }
                 }
             },
@@ -397,9 +392,7 @@ Enumerable.matches = function (input, pattern, flags) {
     return new Enumerable(function () {
         var regex;
         return new IEnumerator(
-            function () {
-                regex = new RegExp(pattern, flags);
-            },
+            function () { regex = new RegExp(pattern, flags); },
             function () {
                 var match = regex.exec(input);
                 return (match) ? this.yieldReturn(match) : false;
@@ -418,9 +411,7 @@ Enumerable.range = function (start, count, step) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                value = start - step;
-            },
+            function () { value = start - step; },
             function () {
                 return (index++ < count)
                     ? this.yieldReturn(value += step)
@@ -440,9 +431,7 @@ Enumerable.rangeDown = function (start, count, step) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                value = start + step;
-            },
+            function () { value = start + step; },
             function () {
                 return (index++ < count)
                     ? this.yieldReturn(value -= step)
@@ -462,9 +451,7 @@ Enumerable.rangeTo = function (start, to, step) {
             var value;
 
             return new IEnumerator(
-                function () {
-                    value = start - step;
-                },
+                function () { value = start - step; },
                 function () {
                     var next = value += step;
                     return (next <= to)
@@ -473,14 +460,13 @@ Enumerable.rangeTo = function (start, to, step) {
                 },
                 Functions.Blank);
         });
-    } else {
+    }
+    else {
         return new Enumerable(function () {
             var value;
 
             return new IEnumerator(
-                function () {
-                    value = start + step;
-                },
+                function () { value = start + step; },
                 function () {
                     var next = value -= step;
                     return (next >= to)
@@ -501,9 +487,7 @@ Enumerable.repeat = function (element, count) {
     return new Enumerable(function () {
         return new IEnumerator(
             Functions.Blank,
-            function () {
-                return this.yieldReturn(element);
-            },
+            function () { return this.yieldReturn(element); },
             Functions.Blank);
     });
 };
@@ -515,12 +499,8 @@ Enumerable.repeatWithFinalize = function (initializer, finalizer) {
     return new Enumerable(function () {
         var element;
         return new IEnumerator(
-            function () {
-                element = initializer();
-            },
-            function () {
-                return this.yieldReturn(element);
-            },
+            function () { element = initializer(); },
+            function () { return this.yieldReturn(element); },
             function () {
                 if (element != null) {
                     finalizer(element);
@@ -541,9 +521,7 @@ Enumerable.generate = function (func, count) {
     return new Enumerable(function () {
         return new IEnumerator(
             Functions.Blank,
-            function () {
-                return this.yieldReturn(func());
-            },
+            function () { return this.yieldReturn(func()); },
             Functions.Blank);
     });
 };
@@ -558,12 +536,8 @@ Enumerable.toInfinity = function (start, step) {
     return new Enumerable(function () {
         var value;
         return new IEnumerator(
-            function () {
-                value = start - step;
-            },
-            function () {
-                return this.yieldReturn(value += step);
-            },
+            function () { value = start - step; },
+            function () { return this.yieldReturn(value += step); },
             Functions.Blank);
     });
 };
@@ -578,12 +552,8 @@ Enumerable.toNegativeInfinity = function (start, step) {
     return new Enumerable(function () {
         var value;
         return new IEnumerator(
-            function () {
-                value = start + step;
-            },
-            function () {
-                return this.yieldReturn(value -= step);
-            },
+            function () { value = start + step; },
+            function () { return this.yieldReturn(value -= step); },
             Functions.Blank);
     });
 };
@@ -614,9 +584,7 @@ Enumerable.defer = function (enumerableFactory) {
         var enumerator;
 
         return new IEnumerator(
-            function () {
-                enumerator = Enumerable.from(enumerableFactory()).getEnumerator();
-            },
+            function () { enumerator = Enumerable.from(enumerableFactory()).getEnumerator(); },
             function () {
                 return (enumerator.moveNext())
                     ? this.yieldReturn(enumerator.current())
@@ -648,9 +616,7 @@ Enumerable.prototype.traverseBreadthFirst = function (func, resultSelector) {
         var buffer = [];
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (true) {
                     if (enumerator.moveNext()) {
@@ -658,12 +624,11 @@ Enumerable.prototype.traverseBreadthFirst = function (func, resultSelector) {
                         return this.yieldReturn(resultSelector(enumerator.current(), nestLevel));
                     }
 
-                    const next = Enumerable.from(buffer).selectMany(function (x) {
-                        return func(x);
-                    });
+                    const next = Enumerable.from(buffer).selectMany(function (x) { return func(x); });
                     if (!next.any()) {
                         return false;
-                    } else {
+                    }
+                    else {
                         nestLevel++;
                         buffer = [];
                         Utils.dispose(enumerator);
@@ -671,9 +636,7 @@ Enumerable.prototype.traverseBreadthFirst = function (func, resultSelector) {
                     }
                 }
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -690,9 +653,7 @@ Enumerable.prototype.traverseDepthFirst = function (func, resultSelector) {
         var enumerator;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (true) {
                     if (enumerator.moveNext()) {
@@ -710,10 +671,9 @@ Enumerable.prototype.traverseDepthFirst = function (func, resultSelector) {
             function () {
                 try {
                     Utils.dispose(enumerator);
-                } finally {
-                    Enumerable.from(enumeratorStack).forEach(function (s) {
-                        s.dispose();
-                    });
+                }
+                finally {
+                    Enumerable.from(enumeratorStack).forEach(function (s) { s.dispose(); });
                 }
             });
     });
@@ -727,15 +687,14 @@ Enumerable.prototype.flatten = function () {
         var middleEnumerator = null;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (true) {
                     if (middleEnumerator != null) {
                         if (middleEnumerator.moveNext()) {
                             return this.yieldReturn(middleEnumerator.current());
-                        } else {
+                        }
+                        else {
                             middleEnumerator = null;
                         }
                     }
@@ -748,7 +707,8 @@ Enumerable.prototype.flatten = function () {
                                 .flatten()
                                 .getEnumerator();
                             continue;
-                        } else {
+                        }
+                        else {
                             return this.yieldReturn(enumerator.current());
                         }
                     }
@@ -759,7 +719,8 @@ Enumerable.prototype.flatten = function () {
             function () {
                 try {
                     Utils.dispose(enumerator);
-                } finally {
+                }
+                finally {
                     Utils.dispose(middleEnumerator);
                 }
             });
@@ -784,9 +745,7 @@ Enumerable.prototype.pairwise = function (selector) {
                     ? this.yieldReturn(selector(prev, enumerator.current()))
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -809,9 +768,7 @@ Enumerable.prototype.scan = function (seed, func) {
         var isFirst = true;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 if (isFirst) {
                     isFirst = false;
@@ -819,7 +776,8 @@ Enumerable.prototype.scan = function (seed, func) {
                         if (enumerator.moveNext()) {
                             return this.yieldReturn(value = enumerator.current());
                         }
-                    } else {
+                    }
+                    else {
                         return this.yieldReturn(value = seed);
                     }
                 }
@@ -828,9 +786,7 @@ Enumerable.prototype.scan = function (seed, func) {
                     ? this.yieldReturn(value = func(value, enumerator.current()))
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -841,7 +797,8 @@ Enumerable.prototype.select = function (selector) {
 
     if (selector.length <= 1) {
         return new WhereSelectEnumerable(this, null, selector);
-    } else {
+    }
+    else {
         var source = this;
 
         return new Enumerable(function () {
@@ -849,17 +806,13 @@ Enumerable.prototype.select = function (selector) {
             var index = 0;
 
             return new IEnumerator(
-                function () {
-                    enumerator = source.getEnumerator();
-                },
+                function () { enumerator = source.getEnumerator(); },
                 function () {
                     return (enumerator.moveNext())
                         ? this.yieldReturn(selector(enumerator.current(), index++))
                         : false;
                 },
-                function () {
-                    Utils.dispose(enumerator);
-                });
+                function () { Utils.dispose(enumerator); });
         });
     }
 };
@@ -871,9 +824,7 @@ Enumerable.prototype.select = function (selector) {
 Enumerable.prototype.selectMany = function (collectionSelector, resultSelector) {
     var source = this;
     collectionSelector = Utils.createLambda(collectionSelector);
-    if (resultSelector == null) resultSelector = function (a, b) {
-        return b;
-    };
+    if (resultSelector == null) resultSelector = function (a, b) { return b; };
     resultSelector = Utils.createLambda(resultSelector);
 
     return new Enumerable(function () {
@@ -882,9 +833,7 @@ Enumerable.prototype.selectMany = function (collectionSelector, resultSelector) 
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 if (middleEnumerator === undefined) {
                     if (!enumerator.moveNext()) return false;
@@ -905,7 +854,8 @@ Enumerable.prototype.selectMany = function (collectionSelector, resultSelector) 
             function () {
                 try {
                     Utils.dispose(enumerator);
-                } finally {
+                }
+                finally {
                     Utils.dispose(middleEnumerator);
                 }
             });
@@ -919,7 +869,8 @@ Enumerable.prototype.where = function (predicate) {
 
     if (predicate.length <= 1) {
         return new WhereEnumerable(this, predicate);
-    } else {
+    }
+    else {
         var source = this;
 
         return new Enumerable(function () {
@@ -927,9 +878,7 @@ Enumerable.prototype.where = function (predicate) {
             var index = 0;
 
             return new IEnumerator(
-                function () {
-                    enumerator = source.getEnumerator();
-                },
+                function () { enumerator = source.getEnumerator(); },
                 function () {
                     while (enumerator.moveNext()) {
                         if (predicate(enumerator.current(), index++)) {
@@ -938,9 +887,7 @@ Enumerable.prototype.where = function (predicate) {
                     }
                     return false;
                 },
-                function () {
-                    Utils.dispose(enumerator);
-                });
+                function () { Utils.dispose(enumerator); });
         });
     }
 };
@@ -957,9 +904,7 @@ Enumerable.prototype.choose = function (selector) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (enumerator.moveNext()) {
                     const result = selector(enumerator.current(), index++);
@@ -969,9 +914,7 @@ Enumerable.prototype.choose = function (selector) {
                 }
                 return this.yieldBreak();
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -995,12 +938,8 @@ Enumerable.prototype.ofType = function (type) {
             break;
     }
     return (typeName === null)
-        ? this.where(function (x) {
-            return x instanceof type;
-        })
-        : this.where(function (x) {
-            return typeof x === typeName;
-        });
+        ? this.where(function (x) { return x instanceof type; })
+        : this.where(function (x) { return typeof x === typeName; });
 };
 
 // mutiple arguments, last one is selector, others are enumerable
@@ -1037,7 +976,8 @@ Enumerable.prototype.zip = function () {
                     }
                 });
         });
-    } else {
+    }
+    else {
         return new Enumerable(function () {
             var enumerators;
             var index = 0;
@@ -1046,24 +986,19 @@ Enumerable.prototype.zip = function () {
                 function () {
                     var array = Enumerable.make(source)
                         .concat(Enumerable.from(args).takeExceptLast().select(Enumerable.from))
-                        .select(function (x) {
-                            return x.getEnumerator()
-                        })
+                        .select(function (x) { return x.getEnumerator() })
                         .toArray();
                     enumerators = Enumerable.from(array);
                 },
                 function () {
-                    if (enumerators.all(function (x) {
-                        return x.moveNext()
-                    })) {
+                    if (enumerators.all(function (x) { return x.moveNext() })) {
                         const array = enumerators
-                            .select(function (x) {
-                                return x.current()
-                            })
+                            .select(function (x) { return x.current() })
                             .toArray();
                         array.push(index++);
                         return this.yieldReturn(selector.apply(null, array));
-                    } else {
+                    }
+                    else {
                         return this.yieldBreak();
                     }
                 },
@@ -1087,9 +1022,7 @@ Enumerable.prototype.merge = function () {
             function () {
                 enumerators = Enumerable.make(source)
                     .concat(Enumerable.from(args).select(Enumerable.from))
-                    .select(function (x) {
-                        return x.getEnumerator()
-                    })
+                    .select(function (x) { return x.getEnumerator() })
                     .toArray();
             },
             function () {
@@ -1099,7 +1032,8 @@ Enumerable.prototype.merge = function () {
 
                     if (enumerator.moveNext()) {
                         return this.yieldReturn(enumerator.current());
-                    } else {
+                    }
+                    else {
                         enumerator.dispose();
                         enumerators.splice(index--, 1);
                     }
@@ -1155,9 +1089,7 @@ Enumerable.prototype.join = function (inner, outerKeySelector, innerKeySelector,
                     }
                 }
             },
-            function () {
-                Utils.dispose(outerEnumerator);
-            });
+            function () { Utils.dispose(outerEnumerator); });
     });
 };
 
@@ -1205,9 +1137,7 @@ Enumerable.prototype.leftJoin = function (inner, outerKeySelector, innerKeySelec
                     }
                 }
             },
-            function () {
-                Utils.dispose(outerEnumerator);
-            });
+            function () { Utils.dispose(outerEnumerator); });
     });
 };
 
@@ -1236,9 +1166,7 @@ Enumerable.prototype.groupJoin = function (inner, outerKeySelector, innerKeySele
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1272,7 +1200,8 @@ Enumerable.prototype.any = function (predicate) {
             if (predicate(enumerator.current())) return true;
         }
         return false;
-    } finally {
+    }
+    finally {
         Utils.dispose(enumerator);
     }
 };
@@ -1293,9 +1222,7 @@ Enumerable.prototype.concat = function () {
             var secondEnumerator;
 
             return new IEnumerator(
-                function () {
-                    firstEnumerator = source.getEnumerator();
-                },
+                function () { firstEnumerator = source.getEnumerator(); },
                 function () {
                     if (secondEnumerator == null) {
                         if (firstEnumerator.moveNext()) return this.yieldReturn(firstEnumerator.current());
@@ -1307,12 +1234,14 @@ Enumerable.prototype.concat = function () {
                 function () {
                     try {
                         Utils.dispose(firstEnumerator);
-                    } finally {
+                    }
+                    finally {
                         Utils.dispose(secondEnumerator);
                     }
                 });
         });
-    } else {
+    }
+    else {
         const args = arguments;
 
         return new Enumerable(function () {
@@ -1322,9 +1251,7 @@ Enumerable.prototype.concat = function () {
                 function () {
                     enumerators = Enumerable.make(source)
                         .concat(Enumerable.from(args).select(Enumerable.from))
-                        .select(function (x) {
-                            return x.getEnumerator()
-                        })
+                        .select(function (x) { return x.getEnumerator() })
                         .toArray();
                 },
                 function () {
@@ -1333,7 +1260,8 @@ Enumerable.prototype.concat = function () {
 
                         if (enumerator.moveNext()) {
                             return this.yieldReturn(enumerator.current());
-                        } else {
+                        }
+                        else {
                             enumerator.dispose();
                             enumerators.splice(0, 1);
                         }
@@ -1378,7 +1306,8 @@ Enumerable.prototype.insert = function (index, second) {
             function () {
                 try {
                     Utils.dispose(firstEnumerator);
-                } finally {
+                }
+                finally {
                     Utils.dispose(secondEnumerator);
                 }
             });
@@ -1398,7 +1327,8 @@ Enumerable.prototype.alternate = function (alternateValueOrSequence) {
             function () {
                 if (alternateValueOrSequence instanceof Array || alternateValueOrSequence.getEnumerator != null) {
                     alternateSequence = Enumerable.from(Enumerable.from(alternateValueOrSequence).toArray()); // freeze
-                } else {
+                }
+                else {
                     alternateSequence = Enumerable.make(alternateValueOrSequence);
                 }
                 enumerator = source.getEnumerator();
@@ -1409,7 +1339,8 @@ Enumerable.prototype.alternate = function (alternateValueOrSequence) {
                     if (alternateEnumerator != null) {
                         if (alternateEnumerator.moveNext()) {
                             return this.yieldReturn(alternateEnumerator.current());
-                        } else {
+                        }
+                        else {
                             alternateEnumerator = null;
                         }
                     }
@@ -1418,7 +1349,8 @@ Enumerable.prototype.alternate = function (alternateValueOrSequence) {
                         buffer = enumerator.current(); // hasNext
                         alternateEnumerator = alternateSequence.getEnumerator();
                         continue; // GOTO
-                    } else if (buffer != null) {
+                    }
+                    else if (buffer != null) {
                         const retVal = buffer;
                         buffer = null;
                         return this.yieldReturn(retVal);
@@ -1430,7 +1362,8 @@ Enumerable.prototype.alternate = function (alternateValueOrSequence) {
             function () {
                 try {
                     Utils.dispose(enumerator);
-                } finally {
+                }
+                finally {
                     Utils.dispose(alternateEnumerator);
                 }
             });
@@ -1447,7 +1380,8 @@ Enumerable.prototype.contains = function (value, compareSelector) {
             if (compareSelector(enumerator.current()) === value) return true;
         }
         return false;
-    } finally {
+    }
+    finally {
         Utils.dispose(enumerator);
     }
 };
@@ -1461,22 +1395,19 @@ Enumerable.prototype.defaultIfEmpty = function (defaultValue) {
         var isFirst = true;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 if (enumerator.moveNext()) {
                     isFirst = false;
                     return this.yieldReturn(enumerator.current());
-                } else if (isFirst) {
+                }
+                else if (isFirst) {
                     isFirst = false;
                     return this.yieldReturn(defaultValue);
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1518,9 +1449,7 @@ Enumerable.prototype.distinctUntilChanged = function (compareSelector) {
                 }
                 return this.yieldBreak();
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1538,9 +1467,7 @@ Enumerable.prototype.except = function (second, compareSelector) {
             function () {
                 enumerator = source.getEnumerator();
                 keys = new Dictionary(compareSelector);
-                Enumerable.from(second).forEach(function (key) {
-                    keys.add(key);
-                });
+                Enumerable.from(second).forEach(function (key) { keys.add(key); });
             },
             function () {
                 while (enumerator.moveNext()) {
@@ -1552,9 +1479,7 @@ Enumerable.prototype.except = function (second, compareSelector) {
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1574,9 +1499,7 @@ Enumerable.prototype.intersect = function (second, compareSelector) {
                 enumerator = source.getEnumerator();
 
                 keys = new Dictionary(compareSelector);
-                Enumerable.from(second).forEach(function (key) {
-                    keys.add(key);
-                });
+                Enumerable.from(second).forEach(function (key) { keys.add(key); });
                 outs = new Dictionary(compareSelector);
             },
             function () {
@@ -1589,9 +1512,7 @@ Enumerable.prototype.intersect = function (second, compareSelector) {
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1613,10 +1534,12 @@ Enumerable.prototype.sequenceEqual = function (second, compareSelector) {
 
             if (secondEnumerator.moveNext()) return false;
             return true;
-        } finally {
+        }
+        finally {
             Utils.dispose(secondEnumerator);
         }
-    } finally {
+    }
+    finally {
         Utils.dispose(firstEnumerator);
     }
 };
@@ -1659,7 +1582,8 @@ Enumerable.prototype.union = function (second, compareSelector) {
             function () {
                 try {
                     Utils.dispose(firstEnumerator);
-                } finally {
+                }
+                finally {
                     Utils.dispose(secondEnumerator);
                 }
             });
@@ -1705,9 +1629,7 @@ Enumerable.prototype.shuffle = function () {
         var buffer;
 
         return new IEnumerator(
-            function () {
-                buffer = source.toArray();
-            },
+            function () { buffer = source.toArray(); },
             function () {
                 if (buffer.length > 0) {
                     const i = Math.floor(Math.random() * buffer.length);
@@ -1735,7 +1657,7 @@ Enumerable.prototype.weightedSample = function (weightSelector) {
                         if (weight <= 0) return null; // ignore 0
 
                         totalWeight += weight;
-                        return {value: x, bound: totalWeight};
+                        return { value: x, bound: totalWeight };
                     })
                     .toArray();
             },
@@ -1749,7 +1671,8 @@ Enumerable.prototype.weightedSample = function (weightSelector) {
                         const index = Math.floor((lower + upper) / 2);
                         if (sortedByBound[index].bound >= draw) {
                             upper = index;
-                        } else {
+                        }
+                        else {
                             lower = index;
                         }
                     }
@@ -1794,9 +1717,7 @@ Enumerable.prototype.groupBy = function (keySelector, elementSelector, resultSel
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1812,10 +1733,9 @@ Enumerable.prototype.partitionBy = function (keySelector, elementSelector, resul
     var hasResultSelector;
     if (resultSelector == null) {
         hasResultSelector = false;
-        resultSelector = function (key, group) {
-            return new Grouping(key, group);
-        };
-    } else {
+        resultSelector = function (key, group) { return new Grouping(key, group); };
+    }
+    else {
         hasResultSelector = true;
         resultSelector = Utils.createLambda(resultSelector);
     }
@@ -1840,7 +1760,8 @@ Enumerable.prototype.partitionBy = function (keySelector, elementSelector, resul
                 while ((hasNext = enumerator.moveNext()) == true) {
                     if (compareKey === compareSelector(keySelector(enumerator.current()))) {
                         group.push(elementSelector(enumerator.current()));
-                    } else break;
+                    }
+                    else break;
                 }
 
                 if (group.length > 0) {
@@ -1851,16 +1772,15 @@ Enumerable.prototype.partitionBy = function (keySelector, elementSelector, resul
                         key = keySelector(enumerator.current());
                         compareKey = compareSelector(key);
                         group = [elementSelector(enumerator.current())];
-                    } else group = [];
+                    }
+                    else group = [];
 
                     return this.yieldReturn(result);
                 }
 
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1871,9 +1791,7 @@ Enumerable.prototype.buffer = function (count) {
         var enumerator;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 var array = [];
                 var index = 0;
@@ -1884,9 +1802,7 @@ Enumerable.prototype.buffer = function (count) {
                 if (array.length > 0) return this.yieldReturn(array);
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -1932,41 +1848,31 @@ Enumerable.prototype.count = function (predicate) {
 // Overload:function(selector)
 Enumerable.prototype.max = function (selector) {
     if (selector == null) selector = Functions.Identity;
-    return this.select(selector).aggregate(function (a, b) {
-        return (a > b) ? a : b;
-    });
+    return this.select(selector).aggregate(function (a, b) { return (a > b) ? a : b; });
 };
 
 // Overload:function()
 // Overload:function(selector)
 Enumerable.prototype.min = function (selector) {
     if (selector == null) selector = Functions.Identity;
-    return this.select(selector).aggregate(function (a, b) {
-        return (a < b) ? a : b;
-    });
+    return this.select(selector).aggregate(function (a, b) { return (a < b) ? a : b; });
 };
 
 Enumerable.prototype.maxBy = function (keySelector) {
     keySelector = Utils.createLambda(keySelector);
-    return this.aggregate(function (a, b) {
-        return (keySelector(a) > keySelector(b)) ? a : b;
-    });
+    return this.aggregate(function (a, b) { return (keySelector(a) > keySelector(b)) ? a : b; });
 };
 
 Enumerable.prototype.minBy = function (keySelector) {
     keySelector = Utils.createLambda(keySelector);
-    return this.aggregate(function (a, b) {
-        return (keySelector(a) < keySelector(b)) ? a : b;
-    });
+    return this.aggregate(function (a, b) { return (keySelector(a) < keySelector(b)) ? a : b; });
 };
 
 // Overload:function()
 // Overload:function(selector)
 Enumerable.prototype.sum = function (selector) {
     if (selector == null) selector = Functions.Identity;
-    return this.select(selector).aggregate(0, function (a, b) {
-        return a + b;
-    });
+    return this.select(selector).aggregate(0, function (a, b) { return a + b; });
 };
 
 //////////////////
@@ -2116,17 +2022,14 @@ Enumerable.prototype.skip = function (count) {
         return new IEnumerator(
             function () {
                 enumerator = source.getEnumerator();
-                while (index++ < count && enumerator.moveNext()) {
-                }
+                while (index++ < count && enumerator.moveNext()) { }
             },
             function () {
                 return (enumerator.moveNext())
                     ? this.yieldReturn(enumerator.current())
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2142,9 +2045,7 @@ Enumerable.prototype.skipWhile = function (predicate) {
         var isSkipEnd = false;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (!isSkipEnd) {
                     if (enumerator.moveNext()) {
@@ -2161,9 +2062,7 @@ Enumerable.prototype.skipWhile = function (predicate) {
                     : false;
 
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2175,17 +2074,13 @@ Enumerable.prototype.take = function (count) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 return (index++ < count && enumerator.moveNext())
                     ? this.yieldReturn(enumerator.current())
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            }
+            function () { Utils.dispose(enumerator); }
         );
     });
 };
@@ -2201,17 +2096,13 @@ Enumerable.prototype.takeWhile = function (predicate) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 return (enumerator.moveNext() && predicate(enumerator.current(), index++))
                     ? this.yieldReturn(enumerator.current())
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2228,9 +2119,7 @@ Enumerable.prototype.takeExceptLast = function (count) {
         var q = [];
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 while (enumerator.moveNext()) {
                     if (q.length == count) {
@@ -2241,9 +2130,7 @@ Enumerable.prototype.takeExceptLast = function (count) {
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2257,9 +2144,7 @@ Enumerable.prototype.takeFromLast = function (count) {
         var q = [];
 
         return new IEnumerator(
-            function () {
-                sourceEnumerator = source.getEnumerator();
-            },
+            function () { sourceEnumerator = source.getEnumerator(); },
             function () {
                 while (sourceEnumerator.moveNext()) {
                     if (q.length == count) q.shift();
@@ -2272,9 +2157,7 @@ Enumerable.prototype.takeFromLast = function (count) {
                     ? this.yieldReturn(enumerator.current())
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2291,7 +2174,8 @@ Enumerable.prototype.indexOf = function (item) {
                 return false;
             }
         });
-    } else {
+    }
+    else {
         this.forEach(function (x, i) {
             if (x === item) {
                 found = i;
@@ -2313,7 +2197,8 @@ Enumerable.prototype.lastIndexOf = function (item) {
         this.forEach(function (x, i) {
             if (item(x, i)) result = i;
         });
-    } else {
+    }
+    else {
         this.forEach(function (x, i) {
             if (x === item) result = i;
         });
@@ -2335,9 +2220,7 @@ Enumerable.prototype.asEnumerable = function () {
 
 Enumerable.prototype.toArray = function () {
     var array = [];
-    this.forEach(function (x) {
-        array.push(x);
-    });
+    this.forEach(function (x) { array.push(x); });
     return array;
 };
 
@@ -2420,9 +2303,7 @@ Enumerable.prototype.doAction = function (action) {
         var index = 0;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 if (enumerator.moveNext()) {
                     action(enumerator.current(), index++);
@@ -2430,9 +2311,7 @@ Enumerable.prototype.doAction = function (action) {
                 }
                 return false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2458,9 +2337,9 @@ Enumerable.prototype.force = function () {
     var enumerator = this.getEnumerator();
 
     try {
-        while (enumerator.moveNext()) {
-        }
-    } finally {
+        while (enumerator.moveNext()) { }
+    }
+    finally {
         Utils.dispose(enumerator);
     }
 };
@@ -2484,9 +2363,7 @@ Enumerable.prototype.letBind = function (func) {
                     ? this.yieldReturn(enumerator.current())
                     : false;
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2566,7 +2443,7 @@ if (Utils.hasNativeIteratorSupport()) {
                         value: this.enumerator.current()
                     };
                 } else {
-                    return {done: true};
+                    return { done: true };
                 }
             }
         };
@@ -2584,9 +2461,7 @@ Enumerable.prototype.catchError = function (handler) {
         var enumerator;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 try {
                     return (enumerator.moveNext())
@@ -2597,9 +2472,7 @@ Enumerable.prototype.catchError = function (handler) {
                     return false;
                 }
             },
-            function () {
-                Utils.dispose(enumerator);
-            });
+            function () { Utils.dispose(enumerator); });
     });
 };
 
@@ -2611,9 +2484,7 @@ Enumerable.prototype.finallyAction = function (finallyAction) {
         var enumerator;
 
         return new IEnumerator(
-            function () {
-                enumerator = source.getEnumerator();
-            },
+            function () { enumerator = source.getEnumerator(); },
             function () {
                 return (enumerator.moveNext())
                     ? this.yieldReturn(enumerator.current())
@@ -2701,9 +2572,7 @@ OrderedEnumerable.prototype.getEnumerator = function () {
             var sortContext = SortContext.create(self, null);
             sortContext.GenerateKeys(buffer);
 
-            indexes.sort(function (a, b) {
-                return sortContext.compare(a, b);
-            });
+            indexes.sort(function (a, b) { return sortContext.compare(a, b); });
         },
         function () {
             return (index < indexes.length)
@@ -2761,9 +2630,7 @@ var DisposableEnumerable = function (getEnumerator, dispose) {
 DisposableEnumerable.prototype = new Enumerable();
 
 var ArrayEnumerable = function (source) {
-    this.getSource = function () {
-        return source;
-    };
+    this.getSource = function () { return source; };
 };
 ArrayEnumerable.prototype = new Enumerable();
 
@@ -2835,9 +2702,7 @@ ArrayEnumerable.prototype.skip = function (count) {
         var index;
 
         return new IEnumerator(
-            function () {
-                index = (count < 0) ? 0 : count;
-            },
+            function () { index = (count < 0) ? 0 : count; },
             function () {
                 return (index < source.length)
                     ? this.yieldReturn(source[index++])
@@ -2901,9 +2766,7 @@ ArrayEnumerable.prototype.getEnumerator = function () {
 
     // fast and simple enumerator
     return {
-        current: function () {
-            return source[index];
-        },
+        current: function () { return source[index]; },
         moveNext: function () {
             return ++index < source.length;
         },
@@ -2924,11 +2787,10 @@ WhereEnumerable.prototype.where = function (predicate) {
 
     if (predicate.length <= 1) {
         const prevPredicate = this.prevPredicate;
-        const composedPredicate = function (x) {
-            return prevPredicate(x) && predicate(x);
-        };
+        const composedPredicate = function (x) { return prevPredicate(x) && predicate(x); };
         return new WhereEnumerable(this.prevSource, composedPredicate);
-    } else {
+    }
+    else {
         // if predicate use index, can't compose
         return Enumerable.prototype.where.call(this, predicate);
     }
@@ -2948,9 +2810,7 @@ WhereEnumerable.prototype.getEnumerator = function () {
     var enumerator;
 
     return new IEnumerator(
-        function () {
-            enumerator = source.getEnumerator();
-        },
+        function () { enumerator = source.getEnumerator(); },
         function () {
             while (enumerator.moveNext()) {
                 if (predicate(enumerator.current())) {
@@ -2959,9 +2819,7 @@ WhereEnumerable.prototype.getEnumerator = function () {
             }
             return false;
         },
-        function () {
-            Utils.dispose(enumerator);
-        });
+        function () { Utils.dispose(enumerator); });
 };
 
 var WhereSelectEnumerable = function (source, predicate, selector) {
@@ -2984,11 +2842,10 @@ WhereSelectEnumerable.prototype.select = function (selector) {
 
     if (selector.length <= 1) {
         const prevSelector = this.prevSelector;
-        const composedSelector = function (x) {
-            return selector(prevSelector(x));
-        };
+        const composedSelector = function (x) { return selector(prevSelector(x)); };
         return new WhereSelectEnumerable(this.prevSource, this.prevPredicate, composedSelector);
-    } else {
+    }
+    else {
         // if selector uses index, can't compose
         return Enumerable.prototype.select.call(this, selector);
     }
@@ -3001,9 +2858,7 @@ WhereSelectEnumerable.prototype.getEnumerator = function () {
     var enumerator;
 
     return new IEnumerator(
-        function () {
-            enumerator = source.getEnumerator();
-        },
+        function () { enumerator = source.getEnumerator(); },
         function () {
             while (enumerator.moveNext()) {
                 if (predicate == null || predicate(enumerator.current())) {
@@ -3012,9 +2867,7 @@ WhereSelectEnumerable.prototype.getEnumerator = function () {
             }
             return false;
         },
-        function () {
-            Utils.dispose(enumerator);
-        });
+        function () { Utils.dispose(enumerator); });
 };
 
 ///////////////
@@ -3185,12 +3038,10 @@ var Dictionary = (function () {
                     var currentEntry;
 
                     return new IEnumerator(
-                        function () {
-                            currentEntry = self.entryList.first;
-                        },
+                        function () { currentEntry = self.entryList.first; },
                         function () {
                             if (currentEntry != null) {
-                                const result = {key: currentEntry.key, value: currentEntry.value};
+                                const result = { key: currentEntry.key, value: currentEntry.value };
                                 currentEntry = currentEntry.next;
                                 return this.yieldReturn(result);
                             }
