@@ -327,7 +327,7 @@ Enumerable.from = function (obj) {
             let iterator;
             return new Enumerable(function () {
                 return new IEnumerator(
-                    iterator = obj[Symbol.iterator](),
+                    function () { iterator = obj[Symbol.iterator]()},
                     function () {
                         var next = iterator.next();
                         return (next.done ? false : (this.yieldReturn(next.value)));
