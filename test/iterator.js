@@ -1,4 +1,4 @@
-import { test, testModule, deepEqual } from './testutils.js'
+import { test, testModule, deepEqual, equal } from './testutils.js'
 import Enumerable from '../linq.js'
 
 testModule("Iterator");
@@ -54,6 +54,9 @@ test("from Iterable object", function () {
         actual.push(a[0]);
     }
     deepEqual(actual, [1, 2]);
+
+    const set = new Set([1, 2, 3])
+    equal(Enumerable.from(set).first(), 1)
 });
 
 test("from Iterator object", function () {

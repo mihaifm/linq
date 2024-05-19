@@ -336,8 +336,8 @@ Enumerable.from = function (obj) {
             });
         }
 
-        // iterator object
-        if (typeof Symbol !== 'undefined' && typeof obj.next !== 'undefined') {
+        // object conforming to the iterator protocol
+        if (typeof obj.next == Types.Function) {
             return new Enumerable(function () {
                 return new IEnumerator(
                     Functions.Blank,
