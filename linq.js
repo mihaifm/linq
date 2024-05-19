@@ -2901,36 +2901,36 @@ var Dictionary = (function () {
         this.last = null;
     };
     EntryList.prototype =
-        {
-            addLast: function (entry) {
-                if (this.last != null) {
-                    this.last.next = entry;
-                    entry.prev = this.last;
-                    this.last = entry;
-                } else this.first = this.last = entry;
-            },
+    {
+        addLast: function (entry) {
+            if (this.last != null) {
+                this.last.next = entry;
+                entry.prev = this.last;
+                this.last = entry;
+            } else this.first = this.last = entry;
+        },
 
-            replace: function (entry, newEntry) {
-                if (entry.prev != null) {
-                    entry.prev.next = newEntry;
-                    newEntry.prev = entry.prev;
-                } else this.first = newEntry;
+        replace: function (entry, newEntry) {
+            if (entry.prev != null) {
+                entry.prev.next = newEntry;
+                newEntry.prev = entry.prev;
+            } else this.first = newEntry;
 
-                if (entry.next != null) {
-                    entry.next.prev = newEntry;
-                    newEntry.next = entry.next;
-                } else this.last = newEntry;
+            if (entry.next != null) {
+                entry.next.prev = newEntry;
+                newEntry.next = entry.next;
+            } else this.last = newEntry;
 
-            },
+        },
 
-            remove: function (entry) {
-                if (entry.prev != null) entry.prev.next = entry.next;
-                else this.first = entry.next;
+        remove: function (entry) {
+            if (entry.prev != null) entry.prev.next = entry.next;
+            else this.first = entry.next;
 
-                if (entry.next != null) entry.next.prev = entry.prev;
-                else this.last = entry.prev;
-            }
-        };
+            if (entry.next != null) entry.next.prev = entry.prev;
+            else this.last = entry.prev;
+        }
+    };
 
     // Overload:function()
     // Overload:function(compareSelector)
@@ -2941,116 +2941,116 @@ var Dictionary = (function () {
         this.compareSelector = (compareSelector == null) ? Functions.Identity : compareSelector;
     };
     Dictionary.prototype =
-        {
-            add: function (key, value) {
-                var compareKey = this.compareSelector(key);
-                var hash = computeHashCode(compareKey);
-                var entry = new HashEntry(key, value);
-                if (callHasOwnProperty(this.buckets, hash)) {
-                    const array = this.buckets[hash];
-                    for (let i = 0; i < array.length; i++) {
-                        if (this.compareSelector(array[i].key) === compareKey) {
-                            this.entryList.replace(array[i], entry);
-                            array[i] = entry;
-                            return;
-                        }
-                    }
-                    array.push(entry);
-                } else {
-                    this.buckets[hash] = [entry];
-                }
-                this.countField++;
-                this.entryList.addLast(entry);
-            },
-
-            get: function (key) {
-                var compareKey = this.compareSelector(key);
-                var hash = computeHashCode(compareKey);
-                if (!callHasOwnProperty(this.buckets, hash)) return undefined;
-
-                var array = this.buckets[hash];
-                for (let i = 0; i < array.length; i++) {
-                    const entry = array[i];
-                    if (this.compareSelector(entry.key) === compareKey) return entry.value;
-                }
-                return undefined;
-            },
-
-            set: function (key, value) {
-                var compareKey = this.compareSelector(key);
-                var hash = computeHashCode(compareKey);
-                if (callHasOwnProperty(this.buckets, hash)) {
-                    const array = this.buckets[hash];
-                    for (let i = 0; i < array.length; i++) {
-                        if (this.compareSelector(array[i].key) === compareKey) {
-                            const newEntry = new HashEntry(key, value);
-                            this.entryList.replace(array[i], newEntry);
-                            array[i] = newEntry;
-                            return true;
-                        }
-                    }
-                }
-                return false;
-            },
-
-            contains: function (key) {
-                var compareKey = this.compareSelector(key);
-                var hash = computeHashCode(compareKey);
-                if (!callHasOwnProperty(this.buckets, hash)) return false;
-
-                var array = this.buckets[hash];
-                for (let i = 0; i < array.length; i++) {
-                    if (this.compareSelector(array[i].key) === compareKey) return true;
-                }
-                return false;
-            },
-
-            clear: function () {
-                this.countField = 0;
-                this.buckets = {};
-                this.entryList = new EntryList();
-            },
-
-            remove: function (key) {
-                var compareKey = this.compareSelector(key);
-                var hash = computeHashCode(compareKey);
-                if (!callHasOwnProperty(this.buckets, hash)) return;
-
-                var array = this.buckets[hash];
+    {
+        add: function (key, value) {
+            var compareKey = this.compareSelector(key);
+            var hash = computeHashCode(compareKey);
+            var entry = new HashEntry(key, value);
+            if (callHasOwnProperty(this.buckets, hash)) {
+                const array = this.buckets[hash];
                 for (let i = 0; i < array.length; i++) {
                     if (this.compareSelector(array[i].key) === compareKey) {
-                        this.entryList.remove(array[i]);
-                        array.splice(i, 1);
-                        if (array.length == 0) delete this.buckets[hash];
-                        this.countField--;
+                        this.entryList.replace(array[i], entry);
+                        array[i] = entry;
                         return;
                     }
                 }
-            },
-
-            count: function () {
-                return this.countField;
-            },
-
-            toEnumerable: function () {
-                var self = this;
-                return new Enumerable(function () {
-                    var currentEntry;
-
-                    return new IEnumerator(
-                        function () { currentEntry = self.entryList.first; },
-                        function () {
-                            if (currentEntry != null) {
-                                const result = { key: currentEntry.key, value: currentEntry.value };
-                                currentEntry = currentEntry.next;
-                                return this.yieldReturn(result);
-                            }
-                            return false;
-                        },
-                        Functions.Blank);
-                });
+                array.push(entry);
+            } else {
+                this.buckets[hash] = [entry];
             }
-        };
+            this.countField++;
+            this.entryList.addLast(entry);
+        },
+
+        get: function (key) {
+            var compareKey = this.compareSelector(key);
+            var hash = computeHashCode(compareKey);
+            if (!callHasOwnProperty(this.buckets, hash)) return undefined;
+
+            var array = this.buckets[hash];
+            for (let i = 0; i < array.length; i++) {
+                const entry = array[i];
+                if (this.compareSelector(entry.key) === compareKey) return entry.value;
+            }
+            return undefined;
+        },
+
+        set: function (key, value) {
+            var compareKey = this.compareSelector(key);
+            var hash = computeHashCode(compareKey);
+            if (callHasOwnProperty(this.buckets, hash)) {
+                const array = this.buckets[hash];
+                for (let i = 0; i < array.length; i++) {
+                    if (this.compareSelector(array[i].key) === compareKey) {
+                        const newEntry = new HashEntry(key, value);
+                        this.entryList.replace(array[i], newEntry);
+                        array[i] = newEntry;
+                        return true;
+                    }
+                }
+            }
+            return false;
+        },
+
+        contains: function (key) {
+            var compareKey = this.compareSelector(key);
+            var hash = computeHashCode(compareKey);
+            if (!callHasOwnProperty(this.buckets, hash)) return false;
+
+            var array = this.buckets[hash];
+            for (let i = 0; i < array.length; i++) {
+                if (this.compareSelector(array[i].key) === compareKey) return true;
+            }
+            return false;
+        },
+
+        clear: function () {
+            this.countField = 0;
+            this.buckets = {};
+            this.entryList = new EntryList();
+        },
+
+        remove: function (key) {
+            var compareKey = this.compareSelector(key);
+            var hash = computeHashCode(compareKey);
+            if (!callHasOwnProperty(this.buckets, hash)) return;
+
+            var array = this.buckets[hash];
+            for (let i = 0; i < array.length; i++) {
+                if (this.compareSelector(array[i].key) === compareKey) {
+                    this.entryList.remove(array[i]);
+                    array.splice(i, 1);
+                    if (array.length == 0) delete this.buckets[hash];
+                    this.countField--;
+                    return;
+                }
+            }
+        },
+
+        count: function () {
+            return this.countField;
+        },
+
+        toEnumerable: function () {
+            var self = this;
+            return new Enumerable(function () {
+                var currentEntry;
+
+                return new IEnumerator(
+                    function () { currentEntry = self.entryList.first; },
+                    function () {
+                        if (currentEntry != null) {
+                            const result = { key: currentEntry.key, value: currentEntry.value };
+                            currentEntry = currentEntry.next;
+                            return this.yieldReturn(result);
+                        }
+                        return false;
+                    },
+                    Functions.Blank);
+            });
+        }
+    };
 
     return Dictionary;
 })();
